@@ -1,0 +1,79 @@
+substrand_id,display_order,level,strand_name,substrand_name,substrand_type
+b4b8e0f1-084f-49a6-b362-2912f2a6c348,1,1,Number and algebra,Number and Place Value,NumberAndPlaceValue
+756b0049-4eec-4329-9270-d30c036c4160,1,2,Number and algebra,Number and Place Value,NumberAndPlaceValue
+d31d15d8-60ac-4944-9e35-9b203d92b38a,1,3,Number and algebra,Number and Place Value,NumberAndPlaceValue
+70149d9a-6e4e-4d32-8210-027e7f39ad1e,1,4,Number and algebra,Number and place value,NumberAndPlaceValue
+1c4fce9f-9fef-4c80-8563-e1d5f38a6412,1,5,Number and algebra,Number and place value,NumberAndPlaceValue
+41cc48bf-de71-436b-9737-8de9acb36773,1,6,Number and algebra,Number and place value,NumberAndPlaceValue
+3bbadf7e-1f6f-47b7-a3fd-871f3bbd143a,1,7,Number and algebra,Number and place value,NumberAndPlaceValue
+5892c636-4480-4948-b47a-83121d961269,1,8,Number and algebra,Number and place value,NumberAndPlaceValue
+21aecff8-9b31-4282-a70b-faaf64e20e76,2,3,Number and algebra,Fractions and decimals,FractionsAndDecimalsRealNumbers
+13ffbeaa-819a-4628-8e1b-e8069aae0d26,2,4,Number and algebra,Fractions and decimals,FractionsAndDecimalsRealNumbers
+fe500354-58fb-446b-a66d-1ebec36322ea,2,5,Number and algebra,Fractions and decimals,FractionsAndDecimalsRealNumbers
+7e069f11-e3bb-487f-a0c3-426ae2ab2685,2,6,Number and algebra,Fractions and decimals,FractionsAndDecimalsRealNumbers
+ad91f0f7-fb06-444b-ad8d-e2b722874b0b,2,7,Number and algebra,Real numbers,FractionsAndDecimalsRealNumbers
+6e2a4ad7-2587-4ad2-996f-f3ad73ac05a7,2,8,Number and algebra,Real numbers,FractionsAndDecimalsRealNumbers
+b5817fc5-b034-4569-95f6-73b033f279e3,2,9,Number and algebra,Real Numbers,FractionsAndDecimalsRealNumbers
+4430cdca-d233-47e0-a867-ae1dd52dee5e,2,11,Number and algebra,Real numbers,FractionsAndDecimalsRealNumbers
+192d54a4-8926-43ec-b16c-64b00cd85036,3,5,Number and algebra,Money and Financial Mathematics,MoneyAndFinancialMathematics
+17911b2d-f0c8-4439-8674-d83aeb28368d,3,6,Number and algebra,Money and Financial Mathematics,MoneyAndFinancialMathematics
+750161ba-cbd7-4d32-9ee0-4daf8799dbee,3,7,Number and algebra,Money and Financial Mathematics,MoneyAndFinancialMathematics
+0b0b12f0-c3df-4f1d-bbb9-9ebf1b38f96b,3,8,Number and algebra,Money and Financial Mathematics,MoneyAndFinancialMathematics
+be83c2be-d89d-4fc9-94c3-02aa37e11cf3,3,9,Number and algebra,Money and Financial Mathematics,MoneyAndFinancialMathematics
+415d6a84-15a1-42d7-87d6-50d4e8d07564,3,10,Number and algebra,Money and Financial Mathematics,MoneyAndFinancialMathematics
+8fe1437b-a064-4310-99f1-d31b4f392d4f,4,4,Number and algebra,Patterns and algebra,PatternsAndAlgebra
+70f2659d-e2e9-49c2-99dc-3888597c1b48,4,5,Number and algebra,Patterns and algebra,PatternsAndAlgebra
+e567e35f-a444-47bf-9274-76dc3d9d9cdf,4,6,Number and algebra,Patterns and algebra,PatternsAndAlgebra
+9098a5cc-b786-493a-8047-176a0a5dfffb,4,7,Number and algebra,Patterns and algebra,PatternsAndAlgebra
+4ce0b279-fea7-45e6-8291-eba66d54c91f,4,8,Number and algebra,Patterns and algebra,PatternsAndAlgebra
+9953e035-c9dd-4f59-8e34-5f7b63da0990,4,9,Number and algebra,Patterns and algebra,PatternsAndAlgebra
+c6939233-9930-47a8-b059-a701a3b493e8,4,10,Number and algebra,Patterns and algebra,PatternsAndAlgebra
+0bf5650f-18d7-4988-80e4-27e3d8984a96,4,11,Number and algebra,Patterns and algebra,PatternsAndAlgebra
+6b265364-cca6-4944-9c89-08d8397ec5d0,5,7,Number and algebra,Linear and non-linear relationships,LinearAndNonLinearRelationships
+86c567a8-e8ab-4bf3-8c89-86c4d39c38cd,5,8,Number and algebra,Linear and non-linear relationships,LinearAndNonLinearRelationships
+ab6a2d79-f076-440f-85c7-e0c77daeea35,5,9,Number and algebra,Linear and non-linear relationships,LinearAndNonLinearRelationships
+575112f6-ef3b-419a-a3d0-36e3e99f45ec,5,10,Number and algebra,Linear and non-linear relationships,LinearAndNonLinearRelationships
+045a269f-b5f5-4970-be07-0850ef98d5c3,5,11,Number and algebra,Linear and non-linear relationships,LinearAndNonLinearRelationships
+75ea7dd4-e77d-4434-92c8-1bc39b0d9f6b,6,3,Measurement and geometry,Using units of measurement,UsingUnitsOfMeasurement
+c988a4e1-6133-4fe5-b3d9-09d895d7cc65,6,4,Measurement and geometry,Using units of measurement,UsingUnitsOfMeasurement
+08f04808-48c7-40a1-ae77-9ca2df4ab7e3,6,5,Measurement and geometry,Using units of measurement,UsingUnitsOfMeasurement
+d275d3c2-b220-46e9-a981-4d70d6b49c51,6,6,Measurement and geometry,Using units of measurement,UsingUnitsOfMeasurement
+4fb262e6-d871-4690-8c5d-ad3c12653227,6,7,Measurement and geometry,Using units of measurement,UsingUnitsOfMeasurement
+85eb5aa4-64e7-48be-a21f-7a311eea3ad1,6,8,Measurement and geometry,Using units of measurement,UsingUnitsOfMeasurement
+d43ae014-a949-44c9-81f3-259b517888cc,6,9,Measurement and geometry,Using units of measurement,UsingUnitsOfMeasurement
+b52d5f8e-0a46-4c44-9e3a-2329aed9e0e9,6,10,Measurement and geometry,Using units of measurement,UsingUnitsOfMeasurement
+c99e6f3d-11cc-49cf-bc13-699385bdd5d7,6,11,Measurement and geometry,Using units of measurement,UsingUnitsOfMeasurement
+d6d2f1df-44dc-4497-a9b5-0aeceb204169,7,4,Measurement and geometry,Shape,Shape
+826f6c99-71ab-408c-88cf-30c3d4706a5a,7,5,Measurement and geometry,Shape,Shape
+05dd02af-50e0-4a12-8365-ab7ddeb505d5,7,6,Measurement and geometry,Shape,Shape
+7ffa83f2-f667-4b54-92e3-1bce5abf5200,7,7,Measurement and geometry,Shape,Shape
+c14d625c-0d0f-4b95-bf6b-f77a21f7a1da,8,3,Measurement and geometry,Geometric reasoning,GeometricReasoning
+c2e28cd3-fd78-4816-bee8-60cec75cd67e,8,4,Measurement and geometry,Geometric reasoning,GeometricReasoning
+07efe15a-39a8-4c91-9866-a55337a402ab,8,5,Measurement and geometry,Geometric reasoning,GeometricReasoning
+15337758-e515-468e-b7dc-21a72d5e3500,8,6,Measurement and geometry,Geometric reasoning,GeometricReasoning
+8a43e447-41f0-4730-8a6e-bc55deffe658,8,7,Measurement and geometry,Geometric reasoning,GeometricReasoning
+e62d2eeb-5d79-4938-962b-030d86ee510a,8,8,Measurement and geometry,Geometric reasoning,GeometricReasoning
+bb4824e8-b5d4-4ac2-8d7f-c881fe818e1b,8,9,Measurement and geometry,Geometric reasoning,GeometricReasoning
+824fec34-358d-4a87-ab0b-9c3a17e29be9,8,11,Measurement and geometry,Geometric reasoning,GeometricReasoning
+c2405eae-6cdf-40e7-b3a8-b5fa5c1da6e5,9,5,Measurement and geometry,Location and transformation,LocationAndTransformation
+b30a4b86-9a3a-4663-a768-056e1031aed1,9,6,Measurement and geometry,Location and transformation,LocationAndTransformation
+5c6a1386-6a23-44eb-af61-17d6157aaf5d,9,7,Measurement and geometry,Location and transformation,LocationAndTransformation
+4494b942-d81e-4986-bc31-6f67e1aaace8,10,9,Measurement and geometry,Pythagoras and trigonometry,PythagorasAndTrigonometry
+fc36a739-8536-4ba7-829b-052b132771f4,10,10,Measurement and geometry,Pythagoras and trigonometry,PythagorasAndTrigonometry
+a93356df-d527-453e-9772-26d0275e8d28,10,11,Measurement and geometry,Pythagoras and trigonometry,PythagorasAndTrigonometry
+3f3fdfbf-2594-4a00-8285-1d49da79c7da,11,3,Statistics and probability,Chance,Chance
+4b2b8ad1-967c-4f84-b7bc-6e36053dfffa,11,4,Statistics and probability,Chance,Chance
+f4b45e56-16f1-4e91-ac3b-66e362398ae7,11,5,Statistics and probability,Chance,Chance
+afaa5a16-d080-458e-9482-282579b4b33d,11,6,Statistics and probability,Chance,Chance
+2b084261-1b7d-42d2-9151-c5e5908e3dde,11,7,Statistics and probability,Chance,Chance
+9432bd5c-9e29-45bd-8416-2fc31b538006,11,8,Statistics and probability,Chance,Chance
+f8864470-806a-4c48-b79f-cf102f497389,11,9,Statistics and probability,Chance,Chance
+98db6d32-b2fd-4d93-a03d-0e1825ffbab4,11,10,Statistics and probability,Chance,Chance
+5c554c5a-af96-41ee-bcb4-e4024f3c8616,12,4,Statistics and probability,Data representation and interpretation,DataRepresentationAndIntepretation
+5d3c8bfc-2c65-4dac-b869-f1a458162131,12,5,Statistics and probability,Data representation and interpretation,DataRepresentationAndIntepretation
+d3533be5-c7f7-4921-90cf-aee6e40a2b78,12,6,Statistics and probability,Data representation and interpretation,DataRepresentationAndIntepretation
+812f68ed-ba03-4fa8-ac4d-012679c14d8e,12,7,Statistics and probability,Data representation and interpretation,DataRepresentationAndIntepretation
+70a121dc-acb3-4064-96ea-625106e8f5f9,12,8,Statistics and probability,Data representation and interpretation,DataRepresentationAndIntepretation
+b9af2532-b836-4264-8bb3-2ae171fa92b4,12,9,Statistics and probability,Data representation and interpretation,DataRepresentationAndIntepretation
+7b143216-1dcd-4a7e-8ff0-15a544127ea8,12,10,Statistics and probability,Data representation and interpretation,DataRepresentationAndIntepretation
+843a3d58-6212-44e1-8cb2-d737ef67d0c1,12,11,Statistics and probability,Data representation and interpretation,DataRepresentationAndIntepretation

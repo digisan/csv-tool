@@ -131,7 +131,7 @@ func CsvReader(r io.Reader,
 
 SAVE:
 	// save
-	if w != nil {
+	if !isInterfaceNil(w) {
 		csvdata := []byte(sTrimSuffix(hdrLine+"\n"+sJoin(allRows, "\n"), "\n"))
 		_, err = w.Write(csvdata)
 		failP1OnErr("%v", err)
@@ -152,10 +152,14 @@ func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, h
 	failP1OnErr("csvpath: he file is not found || wrong root : %v", err)
 	defer fr.Close()
 
-	mustCreateDir(filepath.Dir(outpath))
-	fw, err := os.OpenFile(outpath, os.O_WRONLY|os.O_CREATE, 0666)
-	failP1OnErr("outpath: The file is not found || wrong root : %v", err)
-	defer fw.Close()
+	var fw *os.File = nil
+
+	if trimBlank(outpath) != "" {
+		mustCreateDir(filepath.Dir(outpath))
+		fw, err = os.OpenFile(outpath, os.O_WRONLY|os.O_CREATE, 0666)
+		failP1OnErr("outpath: The file is not found || wrong root : %v", err)
+		defer fw.Close()
+	}
 
 	hRow, rows, err := CsvReader(fr, f, keepHdr, false, fw)
 	failOnErrWhen(rows == nil, "%v @ %s", err, outpath) // go internal csv func error

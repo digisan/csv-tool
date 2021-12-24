@@ -2,6 +2,7 @@ package csvtool
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 
 	gio "github.com/digisan/gotk/io"
@@ -9,20 +10,28 @@ import (
 )
 
 var (
-	sContains     = strings.Contains
-	sReplaceAll   = strings.ReplaceAll
-	sHasPrefix    = strings.HasPrefix
-	sHasSuffix    = strings.HasSuffix
-	sTrimSuffix   = strings.TrimSuffix
-	sTrim         = strings.Trim
-	sJoin         = strings.Join
-	fSf           = fmt.Sprintf
-	fEf           = fmt.Errorf
-	warnOnErr     = lk.WarnOnErr
-	failP1OnErr   = lk.FailP1OnErr
-	failOnErrWhen = lk.FailOnErrWhen
-	mustCreateDir = gio.MustCreateDir
+	sRepeat        = strings.Repeat
+	sContains      = strings.Contains
+	sReplaceAll    = strings.ReplaceAll
+	sHasPrefix     = strings.HasPrefix
+	sHasSuffix     = strings.HasSuffix
+	sTrimSuffix    = strings.TrimSuffix
+	sTrim          = strings.Trim
+	sJoin          = strings.Join
+	fSf            = fmt.Sprintf
+	fEf            = fmt.Errorf
+	warnOnErr      = lk.WarnOnErr
+	failOnErr      = lk.FailOnErr
+	failP1OnErr    = lk.FailP1OnErr
+	failOnErrWhen  = lk.FailOnErrWhen
+	mustCreateDir  = gio.MustCreateDir
+	mustWriteFile  = gio.MustWriteFile
+	mustAppendFile = gio.MustAppendFile
 )
+
+func isInterfaceNil(i interface{}) bool {
+	return reflect.ValueOf(i).IsNil()
+}
 
 func isWrappedWith(s, prefix, suffix string) bool {
 	return sHasPrefix(s, prefix) && sHasSuffix(s, suffix)
@@ -81,4 +90,8 @@ func tryStripDQ(s string) string {
 
 func isBlank(s string) bool {
 	return len(sTrim(s, " \t\n")) == 0
+}
+
+func trimBlank(s string) string {
+	return sTrim(s, " \t\n")
 }
