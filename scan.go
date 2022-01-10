@@ -6,6 +6,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+
+	"github.com/digisan/gotk"
 )
 
 func ItemEsc(item string) string {
@@ -40,7 +42,7 @@ func Info(r io.Reader) ([]string, int, error) {
 }
 
 // CsvInfo : headers, nItem, error
-func CsvInfo(path string) ([]string, int, error) {
+func FileInfo(path string) ([]string, int, error) {
 	csvFile, err := os.Open(path)
 	if err != nil {
 		if csvFile != nil {
@@ -131,7 +133,7 @@ func CsvReader(r io.Reader,
 
 SAVE:
 	// save
-	if !isInterfaceNil(w) {
+	if !gotk.IsInterfaceNil(w) {
 		csvdata := []byte(sTrimSuffix(hdrLine+"\n"+sJoin(allRows, "\n"), "\n"))
 		_, err = w.Write(csvdata)
 		failP1OnErr("%v", err)

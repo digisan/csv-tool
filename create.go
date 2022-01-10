@@ -34,11 +34,11 @@ func Append(path string, validate bool, rows ...string) {
 // Combine : extend columns, linkHeaders combination must be UNIQUE in csvfileA & csvfileB
 func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outpath string) {
 
-	headersA, _, err := CsvInfo(pathA)
+	headersA, _, err := FileInfo(pathA)
 	failOnErr("%v", err)
 	failOnErrWhen(!str.SuperEq(headersA, linkHeaders), "%v", fEf("headers of csv-A must have all link-headers"))
 
-	headersB, _, err := CsvInfo(pathB)
+	headersB, _, err := FileInfo(pathB)
 	failOnErr("%v", err)
 	failOnErrWhen(!str.SuperEq(headersB, linkHeaders), "%v", fEf("headers of csv-B must have all link-headers"))
 

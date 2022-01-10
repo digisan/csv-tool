@@ -2,7 +2,6 @@ package csvtool
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
 	gio "github.com/digisan/gotk/io"
@@ -28,10 +27,6 @@ var (
 	mustWriteFile  = gio.MustWriteFile
 	mustAppendFile = gio.MustAppendFile
 )
-
-func isInterfaceNil(i interface{}) bool {
-	return reflect.ValueOf(i).IsNil()
-}
 
 func isWrappedWith(s, prefix, suffix string) bool {
 	return sHasPrefix(s, prefix) && sHasSuffix(s, suffix)

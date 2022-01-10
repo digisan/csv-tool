@@ -1,24 +1,8 @@
 package csvtool
 
 import (
-	"fmt"
-	"io"
-	"os"
 	"testing"
 )
-
-func f2w(w io.Writer) {
-	fmt.Println(w == nil)
-	fmt.Println(isInterfaceNil(w))
-}
-
-func TestMisc(t *testing.T) {
-	var p *os.File = nil
-	f2w(p)
-	fmt.Println("------------------")
-	p, _ = os.Open("./data/data.csv")
-	f2w(p)
-}
 
 func TestCombine(t *testing.T) {
 	type args struct {
