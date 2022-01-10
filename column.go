@@ -41,15 +41,15 @@ func Column(r io.Reader, idx int) (hdr string, items []string, err error) {
 
 // FileColumn : header, items, err
 func FileColumn(path string, idx int) (hdr string, items []string, err error) {
-	csvFile, err := os.Open(path)
+	csv, err := os.Open(path)
 	if err != nil {
-		if csvFile != nil {
-			csvFile.Close()
+		if csv != nil {
+			csv.Close()
 		}
 		return "", nil, err
 	}
-	defer csvFile.Close()
-	return Column(csvFile, idx)
+	defer csv.Close()
+	return Column(csv, idx)
 }
 
 // GetColAttr :
@@ -89,14 +89,14 @@ func GetColAttr(r io.Reader, idx int) (*ColAttr, error) {
 }
 
 // FileColAttr :
-func FileColAttr(csvpath string, idx int) (*ColAttr, error) {
-	csvFile, err := os.Open(csvpath)
+func FileColAttr(path string, idx int) (*ColAttr, error) {
+	csv, err := os.Open(path)
 	if err != nil {
-		if csvFile != nil {
-			csvFile.Close()
+		if csv != nil {
+			csv.Close()
 		}
 		return nil, err
 	}
-	defer csvFile.Close()
-	return GetColAttr(csvFile, idx)
+	defer csv.Close()
+	return GetColAttr(csv, idx)
 }
