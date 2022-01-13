@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	csvtool "github.com/digisan/csv-tool"
+	ct "github.com/digisan/csv-tool"
 	qry "github.com/digisan/csv-tool/query"
 	"github.com/digisan/go-generics/str"
 	fd "github.com/digisan/gotk/filedir"
@@ -80,7 +80,7 @@ func Split(csvfile, outputdir string, categories ...string) ([]string, []string,
 	}
 
 	// --------------- strict schema check --------------- //
-	headers, nRow, err := csvtool.FileInfo(csvfile)
+	headers, nRow, err := ct.FileInfo(csvfile)
 	if err != nil {
 		return nil, nil, fmt.Errorf("%v @ %s", err, csvfile)
 	}

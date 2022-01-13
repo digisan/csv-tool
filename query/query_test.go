@@ -10,17 +10,32 @@ import (
 	"testing"
 	"time"
 
-	csvtool "github.com/digisan/csv-tool"
-	"github.com/digisan/gotk"
+	ct "github.com/digisan/csv-tool"
+	gtk "github.com/digisan/gotk"
 	fd "github.com/digisan/gotk/filedir"
 	gio "github.com/digisan/gotk/io"
 	"github.com/digisan/gotk/iter"
 	lk "github.com/digisan/logkit"
 )
 
+func TestSliceEq(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	s2 := []int{1, 2, 3}
+	fmt.Println(reflect.DeepEqual(s1, s2))
+}
+
+func TestUnique(t *testing.T) {
+
+	defer gtk.TrackTime(time.Now())
+	lk.Log2F(true, "./TestSubset.log")
+
+	Unique("../data/data.csv", "../out/data-uni.csv")
+	GetRepeated("../data/data.csv", "../out/data-rep.csv", func(rRepCnt int) bool { return rRepCnt >= 2 })
+}
+
 func TestSubset(t *testing.T) {
 
-	defer gotk.TrackTime(time.Now())
+	defer gtk.TrackTime(time.Now())
 	lk.Log2F(true, "./TestSubset.log")
 
 	dir := "../data/"
@@ -39,7 +54,7 @@ func TestSubset(t *testing.T) {
 		func() {
 
 			fmt.Println(fName)
-			_, n, _ := csvtool.FileInfo(fName)
+			_, n, _ := ct.FileInfo(fName)
 
 			in, err := os.ReadFile(fName)
 			lk.FailOnErr("%v", err)
@@ -78,7 +93,7 @@ func TestSubset(t *testing.T) {
 
 func TestSelect(t *testing.T) {
 
-	defer gotk.TrackTime(time.Now())
+	defer gtk.TrackTime(time.Now())
 	lk.Log2F(true, "./TestSelect.log")
 
 	dir := "../data/"
@@ -115,7 +130,7 @@ func TestSelect(t *testing.T) {
 
 func TestQuery(t *testing.T) {
 
-	defer gotk.TrackTime(time.Now())
+	defer gtk.TrackTime(time.Now())
 	lk.Log2F(true, "./TestQuery.log")
 
 	dir := "../data"
@@ -174,35 +189,4 @@ func TestQueryAtConfig(t *testing.T) {
 	n, err := QueryAtConfig("./query.toml")
 	lk.FailOnErr("%v", err)
 	fmt.Println(n)
-}
-
-func TestUnique(t *testing.T) {
-	type args struct {
-		csvpath string
-		outcsv  string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		want1   []string
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1, err := Unique(tt.args.csvpath, tt.args.outcsv)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Unique() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("Unique() got = %v, want %v", got, tt.want)
-			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("Unique() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
 }

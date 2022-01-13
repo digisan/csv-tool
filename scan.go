@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/digisan/gotk"
+	gtk "github.com/digisan/gotk"
 )
 
 func ItemEsc(item string) string {
@@ -16,7 +16,7 @@ func ItemEsc(item string) string {
 		if hasDQ {
 			item = sReplaceAll(item, "\"", "\"\"")
 		}
-		if hasComma || hasLF {
+		if hasComma || hasLF || hasDQ {
 			item = tryWrapWithDQ(item)
 		}
 	}
@@ -133,7 +133,7 @@ func CsvReader(r io.Reader,
 
 SAVE:
 	// save
-	if !gotk.IsInterfaceNil(w) {
+	if !gtk.IsInterfaceNil(w) {
 		csvdata := []byte(sTrimSuffix(hdrLine+"\n"+sJoin(allRows, "\n"), "\n"))
 		_, err = w.Write(csvdata)
 		failP1OnErr("%v", err)
@@ -151,7 +151,7 @@ func Scan(in []byte, f func(i, n int, headers, items []string) (ok bool, hdrline
 func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, hdrline, row string), keepHdr bool, outpath string) (string, []string, error) {
 
 	fr, err := os.Open(path)
-	failP1OnErr("csvpath: he file is not found || wrong root : %v", err)
+	failP1OnErr("csvpath: File is not found || wrong root : %v", err)
 	defer fr.Close()
 
 	var fw *os.File = nil
@@ -159,7 +159,7 @@ func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, h
 	if trimBlank(outpath) != "" {
 		mustCreateDir(filepath.Dir(outpath))
 		fw, err = os.OpenFile(outpath, os.O_WRONLY|os.O_CREATE, 0666)
-		failP1OnErr("outpath: The file is not found || wrong root : %v", err)
+		failP1OnErr("outpath: File is not found || wrong root : %v", err)
 		defer fw.Close()
 	}
 

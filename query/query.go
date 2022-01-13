@@ -11,41 +11,70 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
-	csvtool "github.com/digisan/csv-tool"
+	ct "github.com/digisan/csv-tool"
 	"github.com/digisan/go-generics/i32"
 	"github.com/digisan/go-generics/i64"
 	"github.com/digisan/go-generics/si64"
 	"github.com/digisan/go-generics/str"
-	"github.com/digisan/gotk"
+	gtk "github.com/digisan/gotk"
 	fd "github.com/digisan/gotk/filedir"
 	gio "github.com/digisan/gotk/io"
 	lk "github.com/digisan/logkit"
 )
 
-// Unique : remove repeated items
-func Unique(csv, out string) (string, []string, error) {
-	// check out csv file
-	defer csvtool.ScanFile(out, nil, true, "")
+// GetRepeated : remove repeated items
+func GetRepeated(csv, out string, f func(rRepCnt int) bool) (string, []string, error) {
+	_, _, mHashCnt, err := Unique(csv, "")
+	if err != nil {
+		return "", nil, err
+	}
+	return ct.ScanFile(csv,
+		func(i, n int, headers, items []string) (ok bool, hdrline string, row string) {
+			md5s := str.FM(items, nil, func(i int, e string) string {
+				return fmt.Sprint(md5.Sum([]byte(e)))
+			})
+			rowhash := strings.Join(md5s, ",")
+			headers4w := str.FM(headers, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+			items4w := str.FM(items, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+			return f(mHashCnt[rowhash]), strings.Join(headers4w, ","), strings.Join(items4w, ",")
+		},
+		true,
+		out,
+	)
+}
 
-	m := make(map[string]struct{})
-	return csvtool.ScanFile(
+// Unique : remove repeated items
+func Unique(csv, out string) (string, []string, map[string]int, error) {
+	// check out csv file is valid
+	defer func() {
+		if out != "" {
+			ct.ScanFile(out, nil, true, "")
+		}
+	}()
+
+	mHashCnt := make(map[string]int)
+	h, rs, err := ct.ScanFile(
 		csv,
 		func(idx, cnt int, headers, items []string) (bool, string, string) {
 			md5s := str.FM(items, nil, func(i int, e string) string {
 				return fmt.Sprint(md5.Sum([]byte(e)))
 			})
-			row := strings.Join(md5s, ",")
-			if _, ok := m[row]; ok {
+			rowhash := strings.Join(md5s, ",")
+			_, ok := mHashCnt[rowhash]
+			defer func() { mHashCnt[rowhash]++ }()
+
+			if ok {
 				return false, "", ""
 			}
-			m[row] = struct{}{}
-			headers4w := str.FM(headers, nil, func(i int, e string) string { return csvtool.ItemEsc(e) })
-			items4w := str.FM(items, nil, func(i int, e string) string { return csvtool.ItemEsc(e) })
-			return true, strings.Join(headers4w, ","), strings.Join(items4w, ",")
+
+			headers4w := str.FM(headers, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+			items4w := str.FM(items, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+			return !ok, strings.Join(headers4w, ","), strings.Join(items4w, ",")
 		},
 		true,
 		out,
 	)
+	return h, rs, mHashCnt, err
 }
 
 // Subset : content iRow start from 0. i.e. 1st content row index is 0
@@ -57,9 +86,9 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 	}
 
 	cIndices, hdrRow := []int{}, ""
-	fast, min, max := gotk.IsContInts(iRows)
+	fast, min, max := gtk.IsContInts(iRows)
 
-	return csvtool.Scan(in, func(idx, cnt int, headers, items []string) (bool, string, string) {
+	return ct.Scan(in, func(idx, cnt int, headers, items []string) (bool, string, string) {
 
 		// get [hdrRow], [cIndices] once
 		if hdrRow == "" {
@@ -71,7 +100,7 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 					func(i int, e string) int { return str.IdxOf(e, headers...) },
 				)
 				hdrRt = str.Reorder(headers, cIndices) // Reorder has filter
-				hdrRt = str.FM(hdrRt, nil, func(i int, e string) string { return csvtool.ItemEsc(e) })
+				hdrRt = str.FM(hdrRt, nil, func(i int, e string) string { return ct.ItemEsc(e) })
 			} else {
 				cIndices = si64.FM(headers,
 					func(i int, e string) bool { return str.NotIn(e, hdrNames...) },
@@ -79,7 +108,7 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 				)
 				hdrRt = str.FM(headers,
 					func(i int, e string) bool { return i64.In(i, cIndices...) },
-					func(i int, e string) string { return csvtool.ItemEsc(e) },
+					func(i int, e string) string { return ct.ItemEsc(e) },
 				)
 			}
 			hdrRow = strings.Join(hdrRt, ",")
@@ -101,11 +130,11 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 			var itemsRt []string
 			if incCol {
 				itemsRt = str.Reorder(items, cIndices)
-				itemsRt = str.FM(itemsRt, nil, func(i int, e string) string { return csvtool.ItemEsc(e) })
+				itemsRt = str.FM(itemsRt, nil, func(i int, e string) string { return ct.ItemEsc(e) })
 			} else {
 				itemsRt = str.FM(items,
 					func(i int, e string) bool { return i64.In(i, cIndices...) },
-					func(i int, e string) string { return csvtool.ItemEsc(e) },
+					func(i int, e string) string { return ct.ItemEsc(e) },
 				)
 			}
 
@@ -132,9 +161,9 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 	lk.FailP1OnErrWhen(i32.NotIn(R, '&', '|'), "%v", fmt.Errorf("[R] can only be [&, |]"))
 	nCGrp := len(CGrp)
 
-	return csvtool.Scan(in, func(idx, cnt int, headers, items []string) (bool, string, string) {
+	return ct.Scan(in, func(idx, cnt int, headers, items []string) (bool, string, string) {
 
-		hdrNames := str.FM(headers, nil, func(i int, e string) string { return csvtool.ItemEsc(e) })
+		hdrNames := str.FM(headers, nil, func(i int, e string) string { return ct.ItemEsc(e) })
 		hdrRow := strings.Join(hdrNames, ",")
 
 		if len(items) == 0 {
@@ -238,7 +267,7 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 
 		// No conditions OR condition ok
 		if ok || len(CGrp) == 0 {
-			itemValues := str.FM(items, nil, func(i int, e string) string { return csvtool.ItemEsc(e) })
+			itemValues := str.FM(items, nil, func(i int, e string) string { return ct.ItemEsc(e) })
 			return true, hdrRow, strings.Join(itemValues, ",")
 		}
 
