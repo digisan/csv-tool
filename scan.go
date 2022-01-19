@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	gtk "github.com/digisan/gotk"
 )
@@ -55,9 +56,10 @@ func FileInfo(path string) ([]string, int, error) {
 }
 
 // CsvReader : if [f arg: i==-1], it is pure HeaderRow csv
-func CsvReader(r io.Reader,
+func CsvReader(
+	r io.Reader,
 	f func(i, n int, headers, items []string) (ok bool, hdrline, row string),
-	keepHdr bool,
+	keepOriHdr bool,
 	keepAnyRow bool,
 	w io.Writer,
 ) (string, []string, error) {
@@ -88,7 +90,7 @@ func CsvReader(r io.Reader,
 			hdrItem = fSf("column_%d", i)
 			warnOnErr("%v: - column[%d] is empty, mark [%s]", fEf("CSV_COLUMN_HEADER_EMPTY"), i, hdrItem)
 		}
-		headers = append(headers, ItemEsc(hdrItem))
+		headers = append(headers, ItemEsc(hdrItem)) // default is original headers
 	}
 
 	// Remove The Header Row //
@@ -99,7 +101,7 @@ func CsvReader(r io.Reader,
 
 	// if f is NOT provided, we select all rows including headers //
 	if f == nil {
-		if len(content) > 0 || keepHdr {
+		if len(content) > 0 || keepOriHdr {
 			hdrLine = sJoin(headers, ",")
 		}
 		for _, d := range content {
@@ -109,18 +111,22 @@ func CsvReader(r io.Reader,
 	}
 
 	if hdrOnly {
-		if ok, hdrline, _ := f(-1, 1, headers, []string{}); ok && keepHdr {
-			hdrLine = hdrline
+		if keepOriHdr {
+			hdrLine = strings.Join(headers, ",")
 		}
 		goto SAVE
 	}
 
-	if len(content) > 0 || keepHdr {
+	// default hdrLine is original header-line
+	if len(content) > 0 || keepOriHdr {
 		hdrLine = sJoin(headers, ",")
 	}
 
 	for i, d := range content {
-		if ok, _, row := f(i, N, headers, d); ok {
+		if ok, hdrline, row := f(i, N, headers, d); ok {
+			if hdrline != "" {
+				hdrLine = hdrline
+			}
 			if keepAnyRow {
 				allRows = append(allRows, row)
 			} else {
@@ -143,12 +149,12 @@ SAVE:
 }
 
 // Scan : if [f arg: i==-1], it is pure HeaderRow csv
-func Scan(in []byte, f func(i, n int, headers, items []string) (ok bool, hdrline, row string), keepHdr bool, w io.Writer) (string, []string, error) {
-	return CsvReader(bytes.NewReader(in), f, keepHdr, false, w)
+func Scan(in []byte, f func(i, n int, headers, items []string) (ok bool, hdrline, row string), keepOriHdr bool, w io.Writer) (string, []string, error) {
+	return CsvReader(bytes.NewReader(in), f, keepOriHdr, false, w)
 }
 
 // ScanFile :
-func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, hdrline, row string), keepHdr bool, outpath string) (string, []string, error) {
+func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, hdrline, row string), keepOriHdr bool, outpath string) (string, []string, error) {
 
 	fr, err := os.Open(path)
 	failP1OnErr("csvpath: File is not found || wrong root : %v", err)
@@ -163,7 +169,7 @@ func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, h
 		defer fw.Close()
 	}
 
-	hRow, rows, err := CsvReader(fr, f, keepHdr, false, fw)
+	hRow, rows, err := CsvReader(fr, f, keepOriHdr, false, fw)
 	failOnErrWhen(rows == nil, "%v @ %s", err, outpath) // go internal csv func error
 	return hRow, rows, err
 }

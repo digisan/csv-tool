@@ -102,6 +102,12 @@ func TestSelect(t *testing.T) {
 
 	for _, file := range files {
 		fName := filepath.Join(dir, file.Name())
+
+		// specific file
+		if fName != "data.csv" {
+			return
+		}
+
 		if !strings.HasSuffix(fName, ".csv") {
 			continue
 		}
@@ -119,9 +125,9 @@ func TestSelect(t *testing.T) {
 			defer file4w.Close()
 
 			Select(in, '&', []Cond{
-				{Hdr: "School", Val: "21221", ValTyp: "string", Rel: "="},
-				{Hdr: "Domain", Val: "Spelling", ValTyp: "string", Rel: "="},
-				{Hdr: "YrLevel", Val: 3, ValTyp: "int", Rel: "<="},
+				{Hdr: "School", Val: "21221", Rel: "="},
+				{Hdr: "Domain", Val: "Spelling", Rel: "="},
+				{Hdr: "YrLevel", Val: 3, Rel: "<="},
 			}, file4w)
 
 		}()
@@ -148,6 +154,11 @@ func TestQuery(t *testing.T) {
 		go func(filename string) {
 			defer wg.Done()
 
+			// specific file
+			// if filename != "data.csv" {
+			// 	return
+			// }
+
 			if !strings.HasSuffix(filename, ".csv") {
 				return
 			}
@@ -167,11 +178,11 @@ func TestQuery(t *testing.T) {
 					"Test Domain",
 					"Test Item RefID",
 				},
-				'&',
+				'|',
 				[]Cond{
-					{Hdr: "School", Val: "21221", ValTyp: "string", Rel: "="},
-					{Hdr: "YrLevel", Val: 5, ValTyp: "uint", Rel: ">"},
-					{Hdr: "Domain", Val: "Reading", ValTyp: "string", Rel: "!="},
+					{Hdr: "School", Val: "21221", Rel: "="},
+					{Hdr: "YrLevel", Val: 5, Rel: ">"},
+					{Hdr: "Domain", Val: "Reading", Rel: "="},
 				},
 				"out/"+filename,
 			)
@@ -185,8 +196,8 @@ func TestQuery(t *testing.T) {
 	fmt.Println(fd.WalkFileDir("out/", true))
 }
 
-func TestQueryAtConfig(t *testing.T) {
-	n, err := QueryAtConfig("./query.toml")
+func TestQueryByConfig(t *testing.T) {
+	n, err := QueryByConfig("./query.toml")
 	lk.FailOnErr("%v", err)
 	fmt.Println(n)
 }

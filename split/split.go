@@ -196,7 +196,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 				false,
 				rmHdrGrp,
 				'&',
-				[]qry.Cond{{Hdr: cat, Val: catItem, ValTyp: "string", Rel: "="}},
+				[]qry.Cond{{Hdr: cat, Val: catItem, Rel: "="}},
 				io.Writer(wBuf),
 			)
 
@@ -233,7 +233,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 					false,
 					rmHdrGrp,
 					'&',
-					[]qry.Cond{{Hdr: cat, Val: catItem, ValTyp: "string", Rel: "="}},
+					[]qry.Cond{{Hdr: cat, Val: catItem, Rel: "="}},
 					io.Writer(wBuf),
 				)
 

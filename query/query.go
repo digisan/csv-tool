@@ -143,15 +143,14 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 
 		return true, hdrRow, "" // still "ok" as hdrRow is needed even if empty content
 
-	}, !incCol, w)
+	}, true, w)
 }
 
 // Cond :
 type Cond struct {
-	Hdr    string
-	Val    interface{}
-	ValTyp string
-	Rel    string
+	Hdr string
+	Val interface{}
+	Rel string
 }
 
 // Select : R : [&, |]; condition relation : [=, !=, >, <, >=, <=]
@@ -195,7 +194,7 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 					continue NEXTCONDITION
 				}
 
-				switch C.ValTyp {
+				switch Typ := fmt.Sprintf("%T", C.Val); Typ {
 				case "int", "int8", "int16", "int32", "int64":
 					var cValue int64
 					if i64Val, ok := C.Val.(int64); ok {
@@ -248,7 +247,7 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 					}
 
 				default:
-					panic("comparable type [" + C.ValTyp + "] is not supported")
+					panic("comparable type [" + Typ + "] is not supported")
 				}
 			}
 		}
@@ -317,8 +316,8 @@ func QueryFile(csv string, incCol bool, hdrNames []string, R rune, CGrp []Cond, 
 	return err
 }
 
-// QueryAtConfig :
-func QueryAtConfig(tomlPath string) (int, error) {
+// QueryByConfig :
+func QueryByConfig(tomlPath string) (int, error) {
 
 	config := &Config{}
 	if _, err := toml.DecodeFile(tomlPath, config); err != nil {
@@ -331,7 +330,7 @@ func QueryAtConfig(tomlPath string) (int, error) {
 		cond := []Cond{}
 
 		for _, c := range qry.Cond {
-			cond = append(cond, Cond{Hdr: c.Header, Val: c.Value, ValTyp: c.ValueType, Rel: c.RelaOfItemValue})
+			cond = append(cond, Cond{Hdr: c.Header, Val: c.Value, Rel: c.RelaOfItemValue})
 		}
 
 		fmt.Println("Processing ... " + qry.Name)
