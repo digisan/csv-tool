@@ -102,11 +102,10 @@ func TestSplit(t *testing.T) {
 		// },
 	}
 
-	ForceSingleProc(true)
-	Dir4NotSplittable("./out/ignore")
-	StrictSchema(true)
-	KeepCatHeaders(true)
-	KeepIgnCatHeaders(true)
+	ForceSglProc(true)
+	StrictSchema(true, "")
+	KeepSchemaHeaders(true)
+	KeepIgnSchemaHeaders(true)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
