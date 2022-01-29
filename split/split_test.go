@@ -104,8 +104,8 @@ func TestSplit(t *testing.T) {
 
 	ForceSglProc(true)
 	StrictSchema(true, "")
-	KeepSchemaHeaders(true)
-	KeepIgnSchemaHeaders(true)
+	RmSchemaCol(true)
+	RmSchemaColInIgn(true)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

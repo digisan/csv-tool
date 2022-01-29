@@ -6,8 +6,8 @@ func main() {
 
 	split.ForceSglProc(true)
 	split.StrictSchema(true, "")
-	split.KeepSchemaHeaders(true)
-	split.KeepIgnSchemaHeaders(true)
+	split.RmSchemaCol(true)
+	split.RmSchemaColInIgn(true)
 
 	_, _, err := split.Split("../../data/qldStudent.csv", "./out", "School", "YearLevel")
 	if err != nil {
