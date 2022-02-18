@@ -8,7 +8,6 @@ import (
 
 func main() {
 
-	split2.ForceSglProc(true)
 	split2.StrictSchema(true, "")
 	split2.RmSchemaCol(true)
 	split2.RmSchemaColInIgn(false)

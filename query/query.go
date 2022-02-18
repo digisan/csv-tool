@@ -333,7 +333,7 @@ func QueryByConfig(tomlPath string) (int, error) {
 			cond = append(cond, Cond{Hdr: c.Header, Val: c.Value, Rel: c.RelaOfItemValue})
 		}
 
-		fmt.Println("Processing ... " + qry.Name)
+		// fmt.Println("Processing ... " + qry.Name)
 
 		QueryFile(
 			qry.CsvPath,

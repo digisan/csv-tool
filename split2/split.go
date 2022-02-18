@@ -17,8 +17,6 @@ import (
 var (
 	rmSchemaCol      bool
 	rmSchemaColInIgn bool
-	parallel         = false
-	sglProc          = false
 	ignoredOut       = "ignored"
 	strictSchema     = false
 )
@@ -41,18 +39,13 @@ func StrictSchema(strict bool, ignOut string) {
 	}
 }
 
-// ForceSglProc :
-func ForceSglProc(sp bool) {
-	sglProc = sp
-}
-
 // Split : return (split-files, ignored-files, error)
 func Split(csv, out string, categories ...string) ([]string, []string, error) {
 
 	name, dir := filepath.Base(csv), filepath.Dir(csv)
 	schema, nSchema := categories, len(categories)
 
-	fmt.Println("---", name, dir, schema, nSchema)
+	fmt.Sprintln("---", name, dir, schema, nSchema)
 
 	outdir := ""
 	if out == "" {
@@ -128,7 +121,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 		lk.FailOnErr("%v", err)
 
 		items = str.MkSet(items...)
-		fmt.Println(" --", h, items)
+		fmt.Sprintln(" --", h, items)
 
 		if len(lvlDir) > 0 {
 			for _, dir := range lvlDir {
@@ -152,7 +145,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	}, nil)
 
 	// fmt.Println(lvlDir, len(lvlDir))
-	fmt.Println(" ---------- ")
+	fmt.Sprintln(" ---------- ")
 
 	// create structure folders & header only empty file
 	hdrByte := []byte(strings.Join(headers, ","))
