@@ -184,7 +184,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 
 			if rmSchemaCol {
 				for _, iSch := range iSchema {
-					str.DelEleOrderly(&items, iSch)
+					str.DelEleOrderlyAt(&items, iSch)
 				}
 			}
 
