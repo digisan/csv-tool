@@ -1,10 +1,7 @@
 package csvtool
 
 import (
-	"github.com/digisan/go-generics/i64"
-	"github.com/digisan/go-generics/i64s"
-	"github.com/digisan/go-generics/si64"
-	"github.com/digisan/go-generics/str"
+	. "github.com/digisan/go-generics/v2"
 )
 
 // Create : create csv file with input headers
@@ -13,7 +10,7 @@ func Create(outcsv string, hdrNames ...string) (string, error) {
 		return "", fEf("No Headers Provided")
 	}
 
-	headers := str.FM(hdrNames, nil, func(i int, e string) string { return ItemEsc(e) })
+	headers := Map(hdrNames, func(i int, e string) string { return ItemEsc(e) })
 	hdrRow := sJoin(headers, ",")
 	if outcsv != "" {
 		mustWriteFile(outcsv, []byte(hdrRow))
@@ -36,17 +33,17 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outp
 
 	headersA, _, err := FileInfo(pathA)
 	failOnErr("%v", err)
-	failOnErrWhen(!str.SuperEq(headersA, linkHeaders), "%v", fEf("headers of csv-A must have all link-headers"))
+	failOnErrWhen(!SupEq(headersA, linkHeaders), "%v", fEf("headers of csv-A must have all link-headers"))
 
 	headersB, _, err := FileInfo(pathB)
 	failOnErr("%v", err)
-	failOnErrWhen(!str.SuperEq(headersB, linkHeaders), "%v", fEf("headers of csv-B must have all link-headers"))
+	failOnErrWhen(!SupEq(headersB, linkHeaders), "%v", fEf("headers of csv-B must have all link-headers"))
 
-	Create(outpath, str.MkSet(str.Union(headersA, headersB)...)...)
+	Create(outpath, Settify(Union(headersA, headersB)...)...)
 
 	var (
-		lkIndicesA = si64.FM(linkHeaders, nil, func(i int, e string) int { return str.IdxOf(e, headersA...) })
-		lkIndicesB = si64.FM(linkHeaders, nil, func(i int, e string) int { return str.IdxOf(e, headersB...) })
+		lkIndicesA = Map(linkHeaders, func(i int, e string) int { return IdxOf(e, headersA...) })
+		lkIndicesB = Map(linkHeaders, func(i int, e string) int { return IdxOf(e, headersB...) })
 		emptyComma = sRepeat(",", len(headersB)-len(linkHeaders))
 		lkItemsGrp = [][]string{}
 		mAiBr      = make(map[int]string)
@@ -56,10 +53,10 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outp
 		pathA,
 		func(i, n int, headers, items []string) (bool, string, string) {
 
-			lkrItems := i64s.FM(lkIndicesA, nil, func(i, e int) string { return items[e] })
+			lkrItems := Map(lkIndicesA, func(i, e int) string { return items[e] })
 			lkItemsGrp = append(lkItemsGrp, lkrItems)
 
-			items4w := str.FM(items, nil, func(i int, e string) string { return ItemEsc(e) })
+			items4w := Map(items, func(i int, e string) string { return ItemEsc(e) })
 			return true, "", sJoin(items4w, ",")
 		},
 		false,
@@ -70,9 +67,9 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outp
 		pathB,
 		func(i, n int, headers, items []string) (bool, string, string) {
 			for iAtRowA, lkrItems := range lkItemsGrp {
-				if str.Superset(items, lkrItems) {
-					items4w := str.FM(items,
-						func(i int, e string) bool { return i64.NotIn(i, lkIndicesB...) },
+				if IsSuper(items, lkrItems) {
+					items4w := FilterMap(items,
+						func(i int, e string) bool { return NotIn(i, lkIndicesB...) },
 						func(i int, e string) string { return ItemEsc(e) },
 					)
 					mAiBr[iAtRowA] = sJoin(items4w, ",")

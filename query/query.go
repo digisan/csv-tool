@@ -12,10 +12,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	ct "github.com/digisan/csv-tool"
-	"github.com/digisan/go-generics/i32"
-	"github.com/digisan/go-generics/i64"
-	"github.com/digisan/go-generics/si64"
-	"github.com/digisan/go-generics/str"
+	. "github.com/digisan/go-generics/v2"
 	gtk "github.com/digisan/gotk"
 	fd "github.com/digisan/gotk/filedir"
 	gio "github.com/digisan/gotk/io"
@@ -30,12 +27,10 @@ func GetRepeated(csv, out string, f func(rRepCnt int) bool) (string, []string, e
 	}
 	return ct.ScanFile(csv,
 		func(i, n int, headers, items []string) (ok bool, hdrline string, row string) {
-			md5s := str.FM(items, nil, func(i int, e string) string {
-				return fmt.Sprint(md5.Sum([]byte(e)))
-			})
+			md5s := Map(items, func(i int, e string) string { return fmt.Sprint(md5.Sum([]byte(e))) })
 			rowhash := strings.Join(md5s, ",")
-			headers4w := str.FM(headers, nil, func(i int, e string) string { return ct.ItemEsc(e) })
-			items4w := str.FM(items, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+			headers4w := Map(headers, func(i int, e string) string { return ct.ItemEsc(e) })
+			items4w := Map(items, func(i int, e string) string { return ct.ItemEsc(e) })
 			return f(mHashCnt[rowhash]), strings.Join(headers4w, ","), strings.Join(items4w, ",")
 		},
 		true,
@@ -56,9 +51,7 @@ func Unique(csv, out string) (string, []string, map[string]int, error) {
 	h, rs, err := ct.ScanFile(
 		csv,
 		func(idx, cnt int, headers, items []string) (bool, string, string) {
-			md5s := str.FM(items, nil, func(i int, e string) string {
-				return fmt.Sprint(md5.Sum([]byte(e)))
-			})
+			md5s := Map(items, func(i int, e string) string { return fmt.Sprint(md5.Sum([]byte(e))) })
 			rowhash := strings.Join(md5s, ",")
 			_, ok := mHashCnt[rowhash]
 			defer func() { mHashCnt[rowhash]++ }()
@@ -67,8 +60,8 @@ func Unique(csv, out string) (string, []string, map[string]int, error) {
 				return false, "", ""
 			}
 
-			headers4w := str.FM(headers, nil, func(i int, e string) string { return ct.ItemEsc(e) })
-			items4w := str.FM(items, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+			headers4w := Map(headers, func(i int, e string) string { return ct.ItemEsc(e) })
+			items4w := Map(items, func(i int, e string) string { return ct.ItemEsc(e) })
 			return !ok, strings.Join(headers4w, ","), strings.Join(items4w, ",")
 		},
 		true,
@@ -80,9 +73,9 @@ func Unique(csv, out string) (string, []string, map[string]int, error) {
 // Subset : content iRow start from 0. i.e. 1st content row index is 0
 func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int, w io.Writer) (string, []string, error) {
 
-	fnRow := i64.NotIn
+	fnRow := NotIn[int]
 	if incRow {
-		fnRow = i64.In
+		fnRow = In[int]
 	}
 
 	cIndices, hdrRow := []int{}, ""
@@ -95,19 +88,19 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 			// select needed columns, cIndices is qualified header's original index in file headers
 			var hdrRt []string
 			if incCol {
-				cIndices = si64.FM(hdrNames,
-					func(i int, e string) bool { return str.In(e, headers...) },
-					func(i int, e string) int { return str.IdxOf(e, headers...) },
+				cIndices = FilterMap(hdrNames,
+					func(i int, e string) bool { return In(e, headers...) },
+					func(i int, e string) int { return IdxOf(e, headers...) },
 				)
-				hdrRt = str.Reorder(headers, cIndices) // Reorder has filter
-				hdrRt = str.FM(hdrRt, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+				hdrRt = Reorder(headers, cIndices) // Reorder has filter
+				hdrRt = Map(hdrRt, func(i int, e string) string { return ct.ItemEsc(e) })
 			} else {
-				cIndices = si64.FM(headers,
-					func(i int, e string) bool { return str.NotIn(e, hdrNames...) },
+				cIndices = FilterMap(headers,
+					func(i int, e string) bool { return NotIn(e, hdrNames...) },
 					func(i int, e string) int { return i },
 				)
-				hdrRt = str.FM(headers,
-					func(i int, e string) bool { return i64.In(i, cIndices...) },
+				hdrRt = FilterMap(headers,
+					func(i int, e string) bool { return In(i, cIndices...) },
 					func(i int, e string) string { return ct.ItemEsc(e) },
 				)
 			}
@@ -129,11 +122,11 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 			// filter column items
 			var itemsRt []string
 			if incCol {
-				itemsRt = str.Reorder(items, cIndices)
-				itemsRt = str.FM(itemsRt, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+				itemsRt = Reorder(items, cIndices)
+				itemsRt = Map(itemsRt, func(i int, e string) string { return ct.ItemEsc(e) })
 			} else {
-				itemsRt = str.FM(items,
-					func(i int, e string) bool { return i64.In(i, cIndices...) },
+				itemsRt = FilterMap(items,
+					func(i int, e string) bool { return In(i, cIndices...) },
 					func(i int, e string) string { return ct.ItemEsc(e) },
 				)
 			}
@@ -149,7 +142,7 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 // Cond :
 type Cond struct {
 	Hdr string
-	Val interface{}
+	Val any
 	Rel string
 }
 
@@ -157,19 +150,19 @@ type Cond struct {
 // [=, !=] only apply to string comparasion, [>, <, >=, <=] apply to number comparasion
 func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, error) {
 
-	lk.FailP1OnErrWhen(i32.NotIn(R, '&', '|'), "%v", fmt.Errorf("[R] can only be [&, |]"))
+	lk.FailP1OnErrWhen(NotIn(R, '&', '|'), "%v", fmt.Errorf("[R] can only be [&, |]"))
 	nCGrp := len(CGrp)
 
 	return ct.Scan(in, func(idx, cnt int, headers, items []string) (bool, string, string) {
 
-		hdrNames := str.FM(headers, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+		hdrNames := Map(headers, func(i int, e string) string { return ct.ItemEsc(e) })
 		hdrRow := strings.Join(hdrNames, ",")
 
 		if len(items) == 0 {
 			return true, hdrRow, ""
 		}
 
-		CResults := []interface{}{}
+		CResults := []any{}
 
 	NEXTCONDITION:
 		for _, C := range CGrp {
@@ -178,7 +171,7 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 				break NEXTCONDITION
 			}
 
-			if I := str.IdxOf(C.Hdr, headers...); I != -1 {
+			if I := IdxOf(C.Hdr, headers...); I != -1 {
 				iVal := items[I]
 
 				if C.Rel == "=" {
@@ -266,7 +259,7 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 
 		// No conditions OR condition ok
 		if ok || len(CGrp) == 0 {
-			itemValues := str.FM(items, nil, func(i int, e string) string { return ct.ItemEsc(e) })
+			itemValues := Map(items, func(i int, e string) string { return ct.ItemEsc(e) })
 			return true, hdrRow, strings.Join(itemValues, ",")
 		}
 

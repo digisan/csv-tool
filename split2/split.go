@@ -8,7 +8,7 @@ import (
 
 	ct "github.com/digisan/csv-tool"
 	qry "github.com/digisan/csv-tool/query"
-	"github.com/digisan/go-generics/str"
+	. "github.com/digisan/go-generics/v2"
 	fd "github.com/digisan/gotk/filedir"
 	gio "github.com/digisan/gotk/io"
 	lk "github.com/digisan/logkit"
@@ -69,7 +69,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 		return nil, nil, fmt.Errorf("%v @ %s", err, csv)
 	}
 	if strictSchema {
-		if !str.Superset(headers, schema) || nRow == 0 {
+		if !IsSuper(headers, schema) || nRow == 0 {
 
 			ignOut := ignoredOut
 			absIgnOut, err := fd.AbsPath(ignOut, false)
@@ -116,11 +116,11 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	var lvlDir []string
 
 	for _, hdr := range schema {
-		idx := str.IdxOf(hdr, headers...)
+		idx := IdxOf(hdr, headers...)
 		h, items, err := ct.Column(in, idx)
 		lk.FailOnErr("%v", err)
 
-		items = str.MkSet(items...)
+		items = Settify(items...)
 		fmt.Sprintln(" --", h, items)
 
 		if len(lvlDir) > 0 {
@@ -140,9 +140,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	// fmt.Println(" ---------- ")
 
 	// remove partial paths
-	lvlDir = str.FM(lvlDir, func(i int, e string) bool {
-		return len(fd.AncestorList(e)) == len(schema)+len(fd.AncestorList(outdir))
-	}, nil)
+	Filter(&lvlDir, func(i int, e string) bool { return len(fd.AncestorList(e)) == len(schema)+len(fd.AncestorList(outdir)) })
 
 	// fmt.Println(lvlDir, len(lvlDir))
 	fmt.Sprintln(" ---------- ")
@@ -150,7 +148,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	// create structure folders & header only empty file
 	hdrByte := []byte(strings.Join(headers, ","))
 	if rmSchemaCol {
-		hdrByte = []byte(strings.Join(str.Minus(headers, schema), ","))
+		hdrByte = []byte(strings.Join(Minus(headers, schema), ","))
 	}
 
 	splitfiles := []string{}
@@ -163,7 +161,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	// fetch line by line
 	iSchema := []int{}
 	for _, s := range schema {
-		iSchema = append(iSchema, str.IdxOf(s, headers...))
+		iSchema = append(iSchema, IdxOf(s, headers...))
 	}
 	ct.Scan(
 		inData,
@@ -184,7 +182,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 
 			if rmSchemaCol {
 				for _, iSch := range iSchema {
-					str.DelEleOrderlyAt(&items, iSch)
+					DelEleOrderlyAt(&items, iSch)
 				}
 			}
 
@@ -197,6 +195,6 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 		nil,
 	)
 
-	splitfiles = str.MkSet(splitfiles...)
+	splitfiles = Settify(splitfiles...)
 	return splitfiles, nil, nil
 }

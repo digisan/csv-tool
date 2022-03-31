@@ -11,7 +11,7 @@ type Config struct {
 		RelaOfCond string
 		Cond       []struct {
 			Header          string
-			Value           interface{}
+			Value           any
 			ValueType       string
 			RelaOfItemValue string
 		}

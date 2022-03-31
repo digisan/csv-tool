@@ -11,7 +11,7 @@ import (
 
 	ct "github.com/digisan/csv-tool"
 	qry "github.com/digisan/csv-tool/query"
-	"github.com/digisan/go-generics/str"
+	. "github.com/digisan/go-generics/v2"
 	fd "github.com/digisan/gotk/filedir"
 	gio "github.com/digisan/gotk/io"
 	lk "github.com/digisan/logkit"
@@ -84,7 +84,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 		return nil, nil, fmt.Errorf("%v @ %s", err, csv)
 	}
 	if strictSchema {
-		if !str.Superset(headers, schema) || nRow == 0 {
+		if !IsSuper(headers, schema) || nRow == 0 {
 
 			ignOut := ignoredOut
 			absIgnOut, err := fd.AbsPath(ignOut, false)
@@ -179,8 +179,8 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 
 	// --------------- end --------------- //
 
-	unirows := str.MkSet(rows...)
-	unirows = str.FM(unirows, func(i int, e string) bool { return len(strings.Trim(e, " \t")) > 0 }, nil)
+	unirows := Settify(rows...)
+	Filter(&unirows, func(i int, e string) bool { return len(strings.Trim(e, " \t")) > 0 })
 
 	// Safe Mode, But Slow //
 	if !parallel {

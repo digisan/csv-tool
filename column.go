@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/digisan/go-generics/str"
+	. "github.com/digisan/go-generics/v2"
 )
 
 // ColAttr :
@@ -68,7 +68,7 @@ func GetColAttr(r io.Reader, idx int) (*ColAttr, error) {
 		Idx:       idx,
 		Header:    hdr,
 		IsEmpty:   len(items) == 0,
-		IsUnique:  len(items) == len(str.MkSet(items...)),
+		IsUnique:  len(items) == len(Settify(items...)),
 		HasNull:   false,
 		HasEmpty:  false,
 		AllFilled: true,
