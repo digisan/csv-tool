@@ -180,7 +180,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 	// --------------- end --------------- //
 
 	unirows := Settify(rows...)
-	Filter(&unirows, func(i int, e string) bool { return len(strings.Trim(e, " \t")) > 0 })
+	FilterFast(&unirows, func(i int, e string) bool { return len(strings.TrimSpace(e)) > 0 })
 
 	// Safe Mode, But Slow //
 	if !parallel {

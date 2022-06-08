@@ -140,7 +140,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	// fmt.Println(" ---------- ")
 
 	// remove partial paths
-	Filter(&lvlDir, func(i int, e string) bool { return len(fd.AncestorList(e)) == len(schema)+len(fd.AncestorList(outdir)) })
+	FilterFast(&lvlDir, func(i int, e string) bool { return len(fd.AncestorList(e)) == len(schema)+len(fd.AncestorList(outdir)) })
 
 	// fmt.Println(lvlDir, len(lvlDir))
 	fmt.Sprintln(" ---------- ")

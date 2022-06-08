@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	gtk "github.com/digisan/gotk"
+	tc "github.com/digisan/gotk/type-check"
 )
 
 func ItemEsc(item string) string {
@@ -139,7 +139,7 @@ func CsvReader(
 
 SAVE:
 	// save
-	if !gtk.IsInterfaceNil(w) {
+	if !tc.IsInterfaceNil(w) {
 		csvdata := []byte(sTrimSuffix(hdrLine+"\n"+sJoin(allRows, "\n"), "\n"))
 		_, err = w.Write(csvdata)
 		failP1OnErr("%v", err)
