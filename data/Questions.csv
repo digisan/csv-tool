@@ -1,0 +1,33 @@
+module_version_id,question_id,category,display_order,question_type,actual_answer
+d9b587bd-76cc-4016-9b5b-0cb74ea84717,1f20957f-0d78-4dfe-bdb5-d1e329340a6c,A,2,NumericAnswer,63
+d9b587bd-76cc-4016-9b5b-0cb74ea84718,02840dcd-5820-4377-acd3-e4080d4289ae,A,3,NumericAnswer,49
+d9b587bd-76cc-4016-9b5b-0cb74ea84716,4bbe699e-5a24-4db1-b16b-adbcc3f546ac,A,1,NumericAnswer,56
+d9b587bd-76cc-4016-9b5b-0cb74ea84719,ebbedb4d-643b-4d1b-b0b7-881f89ab4836,A,4,NumericAnswer,42
+d9b587bd-76cc-4016-9b5b-0cb74ea84720,44885baa-3b3e-4b22-8976-fc2662abdc81,B,1,NumericAnswer,42
+d9b587bd-76cc-4016-9b5b-0cb74ea84721,7bc79851-a81c-42e9-a6cb-9815383e90f9,B,2,NumericAnswer,48
+d9b587bd-76cc-4016-9b5b-0cb74ea84722,4933b3d6-9107-4128-9f6d-66425f87d66d,B,3,NumericAnswer,54
+d9b587bd-76cc-4016-9b5b-0cb74ea84723,35d24128-26de-4344-8a4c-8068ccfcb44d,B,4,NumericAnswer,36
+d9b587bd-76cc-4016-9b5b-0cb74ea84724,79032bd2-a6bb-43ed-8f24-0f19980aaf06,C,1,NumericAnswer,81
+d9b587bd-76cc-4016-9b5b-0cb74ea84725,88a2aa52-034a-4639-bded-514f71837a71,C,2,NumericAnswer,64
+d9b587bd-76cc-4016-9b5b-0cb74ea84726,892bee9b-2d96-4cc5-a2ab-da9aa9bb63f1,C,3,NumericAnswer,49
+d9b587bd-76cc-4016-9b5b-0cb74ea84727,8035d2b2-bcd2-4e3a-b249-791c49efee7c,C,4,NumericAnswer,72
+d9b587bd-76cc-4016-9b5b-0cb74ea84726,391b9117-65aa-4c5a-85de-5291823b3756,D,1,NumericAnswer,6
+d9b587bd-76cc-4016-9b5b-0cb74ea84726,e4c42c2f-ed03-480d-b1f3-157b098ae552,D,2,NumericAnswer,4
+d9b587bd-76cc-4016-9b5b-0cb74ea84730,798d6657-297c-4be4-b19b-9ffe21c9a3cd,D,3,NumericAnswer,5
+d9b587bd-76cc-4016-9b5b-0cb74ea84731,faac98e1-8d2d-4b51-bf0d-9a08fd1d30b0,D,4,NumericAnswer,7
+d9b587bd-76cc-4016-9b5b-0cb74ea84732,06cfd5b4-61aa-482b-b7a4-69e4e6f9822f,E,1,NumericAnswer,6
+d9b587bd-76cc-4016-9b5b-0cb74ea84733,f9bd1a8d-058c-48ba-818a-c22cd75be9e1,E,2,NumericAnswer,4
+d9b587bd-76cc-4016-9b5b-0cb74ea84734,e3a5527f-6035-4e7a-a5f6-ef9c34a9576a,E,3,NumericAnswer,5
+d9b587bd-76cc-4016-9b5b-0cb74ea84735,5a5f64a8-bc52-4580-a1ea-dc445f8676e1,E,4,NumericAnswer,3
+d9b587bd-76cc-4016-9b5b-0cb74ea84736,8079b9a4-d68a-4e05-8bfb-6e3d7557fb11,F,1,NumericAnswer,8
+d9b587bd-76cc-4016-9b5b-0cb74ea84737,4f1c038a-0bfb-495e-987b-364559aa8529,F,2,NumericAnswer,9
+d9b587bd-76cc-4016-9b5b-0cb74ea84738,c97643e3-e6e2-49ff-9fd2-c28e78794335,F,3,NumericAnswer,6
+d9b587bd-76cc-4016-9b5b-0cb74ea84739,884be01a-c27b-4751-a1a6-eec67846e619,F,4,NumericAnswer,7
+d9b587bd-76cc-4016-9b5b-0cb74ea84740,5db6a014-282c-4147-8012-4343ea52e844,G,1,FillInTheBlanks,42
+d9b587bd-76cc-4016-9b5b-0cb74ea84741,7abcd641-9348-4a1d-94c3-3c20d0c666e2,G,2,FillInTheBlanks,72
+d9b587bd-76cc-4016-9b5b-0cb74ea84742,2583c02e-cd7b-41f6-a2ce-417d22451261,G,3,FillInTheBlanks,48
+d9b587bd-76cc-4016-9b5b-0cb74ea84743,bbeff3cd-d846-4e8f-abb4-aaf194ea1e47,G,4,FillInTheBlanks,45
+d9b587bd-76cc-4016-9b5b-0cb74ea84744,878bf95f-e18e-43eb-be1f-8cff9d9c017d,H,1,Expression,(a.ToLower()==?7 boats?)||(a.ToLower()==?7?)
+d9b587bd-76cc-4016-9b5b-0cb74ea84745,9da244c6-bcb3-49da-a117-6cc587c60e9f,H,2,Expression,(a.ToLower()==?4?)||(a.ToLower()==?4 turns?)
+d9b587bd-76cc-4016-9b5b-0cb74ea84746,0555653b-06cb-4ffd-934d-7a9e1fdb96da,H,3,Expression,(a.ToLower()==?8 boats?)||(a.ToLower()==?8?)
+d9b587bd-76cc-4016-9b5b-0cb74ea84747,2df5b748-5f44-43c3-bfa9-e0dc3c3e564c,H,4,Expression,(a.ToLower()==?5?)||(a.ToLower()==?5 turns?)
