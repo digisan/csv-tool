@@ -15,7 +15,6 @@ import (
 	. "github.com/digisan/go-generics/v2"
 	fd "github.com/digisan/gotk/filedir"
 	gio "github.com/digisan/gotk/io"
-	tc "github.com/digisan/gotk/type-check"
 	lk "github.com/digisan/logkit"
 )
 
@@ -79,7 +78,7 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 	}
 
 	cIndices, hdrRow := []int{}, ""
-	fast, min, max := tc.IsContInts(iRows...)
+	fast, min, max := IsContinuous(iRows...)
 
 	return ct.Scan(in, func(idx, cnt int, headers, items []string) (bool, string, string) {
 

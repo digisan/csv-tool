@@ -11,9 +11,9 @@ import (
 	"time"
 
 	ct "github.com/digisan/csv-tool"
+	. "github.com/digisan/go-generics/v2"
 	fd "github.com/digisan/gotk/filedir"
 	gio "github.com/digisan/gotk/io"
-	"github.com/digisan/gotk/iter"
 	"github.com/digisan/gotk/misc"
 	lk "github.com/digisan/logkit"
 )
@@ -69,7 +69,7 @@ func TestSubset(t *testing.T) {
 				false,
 				[]string{"Domain", "Item Response", "YrLevel", "School", "Age", "substrand_id"},
 				true,
-				iter.Iter2Slc(n-1, -1),
+				IterToSlc(n-1, -1),
 				file4w,
 			)
 
@@ -83,10 +83,9 @@ func TestSubset(t *testing.T) {
 				true,
 				[]string{"School", "Domain", "YrLevel", "XXX", "Test Name", "Test level", "Test Domain", "Test Item RefID", "Item Response"},
 				true,
-				iter.Iter2Slc(0, 20000),
+				IterToSlc(0, 20000),
 				file4w1,
 			)
-
 		}()
 	}
 }
