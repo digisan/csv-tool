@@ -14,7 +14,7 @@ import (
 	. "github.com/digisan/go-generics/v2"
 	fd "github.com/digisan/gotk/filedir"
 	gio "github.com/digisan/gotk/io"
-	"github.com/digisan/gotk/misc"
+	"github.com/digisan/gotk/track"
 	lk "github.com/digisan/logkit"
 )
 
@@ -26,7 +26,7 @@ func TestSliceEq(t *testing.T) {
 
 func TestUnique(t *testing.T) {
 
-	defer misc.TrackTime(time.Now())
+	defer track.TrackTime(time.Now())
 	lk.Log2F(true, "./TestSubset.log")
 
 	Unique("../data/data.csv", "../out/data-uni.csv")
@@ -35,7 +35,7 @@ func TestUnique(t *testing.T) {
 
 func TestSubset(t *testing.T) {
 
-	defer misc.TrackTime(time.Now())
+	defer track.TrackTime(time.Now())
 	lk.Log2F(true, "./TestSubset.log")
 
 	dir := "../data/"
@@ -92,7 +92,7 @@ func TestSubset(t *testing.T) {
 
 func TestSelect(t *testing.T) {
 
-	defer misc.TrackTime(time.Now())
+	defer track.TrackTime(time.Now())
 	lk.Log2F(true, "./TestSelect.log")
 
 	dir := "../data/"
@@ -135,7 +135,7 @@ func TestSelect(t *testing.T) {
 
 func TestQuery(t *testing.T) {
 
-	defer misc.TrackTime(time.Now())
+	defer track.TrackTime(time.Now())
 	lk.Log2F(true, "./TestQuery.log")
 
 	dir := "../data"

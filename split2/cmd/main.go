@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/digisan/csv-tool/split2"
-	"github.com/digisan/gotk/misc"
+	"github.com/digisan/gotk/track"
 )
 
 // func main() {
@@ -45,7 +45,7 @@ import (
 
 func main() {
 
-	defer misc.TrackTime(time.Now())
+	defer track.TrackTime(time.Now())
 
 	split2.StrictSchema(true, "")
 	split2.RmSchemaCol(false)
