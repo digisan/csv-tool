@@ -86,22 +86,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	if strictSchema {
 		if !IsSuper(headers, schema) || nRow == 0 {
 
-			ignrOut := filepath.Clean(ignoredOut)
-			absIgnrOut, err := fd.AbsPath(ignrOut, false)
-			lk.FailOnErr("%v", err)
-			absIgnrOut = filepath.Clean(absIgnrOut)
-
-			if absIgnrOut != ignrOut {
-				ignrOut = filepath.Join(outDir, ignrOut) // if [ignrOut] is rel-path, put it under 'out'
-			}
-
-			nsCsv, _ := fd.RelPath(csv, false)
-			nsCsv = filepath.Join(ignrOut, nsCsv)
-
-			// relPath output likes '../***' is not working with filepath.Join, manually put nsCsv under ignrOut.
-			if !strings.Contains(nsCsv, ignrOut+"/") {
-				nsCsv = filepath.Join(ignrOut, nsCsv)
-			}
+			nsCsv := filepath.Clean(filepath.Join(out, ignoredOut, basename))
 
 			if rmSchemaColInIgn {
 				gio.MustCreateDir(filepath.Dir(nsCsv))
