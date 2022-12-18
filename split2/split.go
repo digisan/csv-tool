@@ -32,10 +32,10 @@ func RmSchemaColInIgn(rmSchema bool) {
 }
 
 // StrictSchema :
-func StrictSchema(strict bool, ignOut string) {
+func StrictSchema(strict bool, ignrOut string) {
 	strictSchema = strict
-	if ignOut != "" {
-		ignoredOut = ignOut
+	if ignrOut != "" {
+		ignoredOut = ignrOut
 	}
 }
 
@@ -47,15 +47,15 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 
 	fmt.Sprintln("---", name, dir, schema, nSchema)
 
-	outdir := ""
+	outDir := ""
 	if out == "" {
-		outdir = "./" + strings.TrimSuffix(name, ".csv") + "/"
+		outDir = "./" + strings.TrimSuffix(name, ".csv") + "/"
 	} else {
-		outdir = strings.TrimSuffix(out, "/") + "/"
+		outDir = strings.TrimSuffix(out, "/") + "/"
 	}
 
-	if !fd.DirExists(outdir) {
-		gio.MustCreateDir(outdir)
+	if !fd.DirExists(outDir) {
+		gio.MustCreateDir(outDir)
 	}
 
 	inData, err := os.ReadFile(csv)
@@ -71,21 +71,22 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	if strictSchema {
 		if !IsSuper(headers, schema) || nRow == 0 {
 
-			ignOut := ignoredOut
-			absIgnOut, err := fd.AbsPath(ignOut, false)
+			ignrOut := filepath.Clean(ignoredOut)
+			absIgnrOut, err := fd.AbsPath(ignrOut, false)
 			lk.FailOnErr("%v", err)
-			if absIgnOut != ignOut {
-				ignOut = filepath.Join(outdir, ignOut) // if [ignOut] is rel-path, put it under 'out'
+			absIgnrOut = filepath.Clean(absIgnrOut)
+
+			if absIgnrOut != ignrOut {
+				ignrOut = filepath.Join(outDir, ignrOut) // if [ignrOut] is rel-path, put it under 'out'
 			}
 
 			nsCsv, _ := fd.RelPath(csv, false)
-			nsCsv = filepath.Join(ignOut, nsCsv)
+			nsCsv = filepath.Join(ignrOut, nsCsv)
 
-			// relPath output likes '../***' is not working with filepath.Join
-			// manually put nsCsv under ignOut.
-			if !strings.Contains(nsCsv, ignOut+"/") {
-				nsCsv = filepath.Join(ignOut, nsCsv)
-			}
+			// relPath output likes '../***' is not working with filepath.Join, manually put nsCsv under ignrOut.
+			// if !strings.Contains(nsCsv, ignrOut+"/") {
+			// 	nsCsv = filepath.Join(ignrOut, nsCsv)
+			// }
 
 			if rmSchemaColInIgn {
 
@@ -131,7 +132,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 			}
 		} else {
 			for _, item := range items {
-				lvlDir = append(lvlDir, filepath.Join(outdir, item))
+				lvlDir = append(lvlDir, filepath.Join(outDir, item))
 			}
 		}
 	}
@@ -140,7 +141,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	// fmt.Println(" ---------- ")
 
 	// remove partial paths
-	FilterFast(&lvlDir, func(i int, e string) bool { return len(fd.AncestorList(e)) == len(schema)+len(fd.AncestorList(outdir)) })
+	FilterFast(&lvlDir, func(i int, e string) bool { return len(fd.AncestorList(e)) == len(schema)+len(fd.AncestorList(outDir)) })
 
 	// fmt.Println(lvlDir, len(lvlDir))
 	fmt.Sprintln(" ---------- ")
@@ -151,10 +152,10 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 		hdrByte = []byte(strings.Join(Minus(headers, schema), ","))
 	}
 
-	splitfiles := []string{}
+	splitFiles := []string{}
 	for _, dir := range lvlDir {
 		toCsv := filepath.Join(dir, name)
-		splitfiles = append(splitfiles, toCsv)
+		splitFiles = append(splitFiles, toCsv)
 		gio.MustWriteFile(toCsv, hdrByte)
 	}
 
@@ -172,7 +173,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 				schemaVal = append(schemaVal, items[iSch])
 			}
 
-			toCsv := outdir
+			toCsv := outDir
 			for _, sv := range schemaVal {
 				toCsv = filepath.Join(toCsv, sv)
 			}
@@ -195,6 +196,6 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 		nil,
 	)
 
-	splitfiles = Settify(splitfiles...)
-	return splitfiles, nil, nil
+	splitFiles = Settify(splitFiles...)
+	return splitFiles, nil, nil
 }

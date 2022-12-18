@@ -19,15 +19,15 @@ import (
 
 var (
 	basename         string
-	csvdir           string
+	csvDir           string
 	mtx              = &sync.Mutex{}
 	schema           []string
 	nSchema          int
 	rmSchemaCol      bool
 	rmSchemaColInIgn bool
-	outdir           string
-	splitfiles       []string
-	ignoredfiles     []string
+	outDir           string
+	splitFiles       []string
+	ignoredFiles     []string
 	parallel         = false
 	sglProc          = false
 	ignoredOut       = "ignored"
@@ -45,10 +45,10 @@ func RmSchemaColInIgn(rmSchema bool) {
 }
 
 // StrictSchema :
-func StrictSchema(strict bool, ignOut string) {
+func StrictSchema(strict bool, ignrOut string) {
 	strictSchema = strict
-	if ignOut != "" {
-		ignoredOut = ignOut
+	if ignrOut != "" {
+		ignoredOut = ignrOut
 	}
 }
 
@@ -57,20 +57,20 @@ func ForceSglProc(sp bool) {
 	sglProc = sp
 }
 
-// Split : return (splitfiles, ignoredfiles, error)
+// Split : return (splitFiles, ignoredFiles, error)
 func Split(csv, out string, categories ...string) ([]string, []string, error) {
 
-	basename, csvdir = filepath.Base(csv), filepath.Dir(csv)
+	basename, csvDir = filepath.Base(csv), filepath.Dir(csv)
 	schema, nSchema = categories, len(categories)
 
 	if out == "" {
-		outdir = "./" + strings.TrimSuffix(basename, ".csv") + "/"
+		outDir = "./" + strings.TrimSuffix(basename, ".csv") + "/"
 	} else {
-		outdir = strings.TrimSuffix(out, "/") + "/"
+		outDir = strings.TrimSuffix(out, "/") + "/"
 	}
 
-	if !fd.DirExists(outdir) {
-		gio.MustCreateDir(outdir)
+	if !fd.DirExists(outDir) {
+		gio.MustCreateDir(outDir)
 	}
 
 	in, err := os.ReadFile(csv)
@@ -86,21 +86,22 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	if strictSchema {
 		if !IsSuper(headers, schema) || nRow == 0 {
 
-			ignOut := ignoredOut
-			absIgnOut, err := fd.AbsPath(ignOut, false)
+			ignrOut := filepath.Clean(ignoredOut)
+			absIgnrOut, err := fd.AbsPath(ignrOut, false)
 			lk.FailOnErr("%v", err)
-			if absIgnOut != ignOut {
-				ignOut = filepath.Join(outdir, ignOut) // if [ignOut] is rel-path, put it under 'out'
+			absIgnrOut = filepath.Clean(absIgnrOut)
+
+			if absIgnrOut != ignrOut {
+				ignrOut = filepath.Join(outDir, ignrOut) // if [ignrOut] is rel-path, put it under 'out'
 			}
 
 			nsCsv, _ := fd.RelPath(csv, false)
-			nsCsv = filepath.Join(ignOut, nsCsv)
+			nsCsv = filepath.Join(ignrOut, nsCsv)
 
-			// relPath output likes '../***' is not working with filepath.Join
-			// manually put nsCsv under ignOut.
-			if !strings.Contains(nsCsv, ignOut+"/") {
-				nsCsv = filepath.Join(ignOut, nsCsv)
-			}
+			// relPath output likes '../***' is not working with filepath.Join, manually put nsCsv under ignrOut.
+			// if !strings.Contains(nsCsv, ignrOut+"/") {
+			// 	nsCsv = filepath.Join(ignrOut, nsCsv)
+			// }
 
 			if rmSchemaColInIgn {
 				gio.MustCreateDir(filepath.Dir(nsCsv))
@@ -123,8 +124,8 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	}
 	// fmt.Printf("%s running on parallel? %v\n", csvfile, parallel)
 
-	splitfiles, ignoredfiles = []string{}, []string{}
-	return splitfiles, ignoredfiles, split(0, in, outdir)
+	splitFiles, ignoredFiles = []string{}, []string{}
+	return splitFiles, ignoredFiles, split(0, in, outDir)
 }
 
 func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
@@ -154,7 +155,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 		if len(rows) == 0 || (len(rows) > 0 && len(strings.Trim(rows[0], " \t")) == 0) {
 
 			ignoredOutInfo := fmt.Sprintf("%s(missing %s)", filepath.Base(ignoredOut), cat)
-			nsCsvDir, _ := fd.RelPath(csvdir, false)
+			nsCsvDir, _ := fd.RelPath(csvDir, false)
 			ignoredInfo := fmt.Sprintf("%s(%s).csv", strings.TrimSuffix(basename, ".csv"), nsCsvDir)
 			ignoredInfo = strings.ReplaceAll(ignoredInfo, "/", "~")
 			nsCsv := filepath.Join(prevpath, ignoredOutInfo, ignoredInfo)
@@ -169,7 +170,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 				gio.MustWriteFile(nsCsv, in)
 			}
 
-			ignoredfiles = append(ignoredfiles, nsCsv)
+			ignoredFiles = append(ignoredFiles, nsCsv)
 			return true
 		}
 		return false
@@ -187,7 +188,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 
 		for _, catItem := range unirows {
 
-			outcsv := outdir
+			outcsv := outDir
 			for _, pcItem := range pCatItems {
 				outcsv += pcItem + "/"
 			}
@@ -206,7 +207,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 
 			if rl == nSchema {
 				gio.MustWriteFile(outcsv, wBuf.Bytes())
-				splitfiles = append(splitfiles, outcsv)
+				splitFiles = append(splitFiles, outcsv)
 			}
 
 			split(rl, wBuf.Bytes(), filepath.Dir(outcsv), append(pCatItems, catItem)...)
@@ -224,7 +225,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 			go func(catItem string) {
 				defer wg.Done()
 
-				outcsv := outdir
+				outcsv := outDir
 				for _, pcItem := range pCatItems {
 					outcsv += pcItem + "/"
 				}
@@ -244,7 +245,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 				if rl == nSchema {
 					mtx.Lock()
 					gio.MustWriteFile(outcsv, wBuf.Bytes())
-					splitfiles = append(splitfiles, outcsv)
+					splitFiles = append(splitFiles, outcsv)
 					mtx.Unlock()
 				}
 
