@@ -84,9 +84,9 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 			nsCsv = filepath.Join(ignrOut, nsCsv)
 
 			// relPath output likes '../***' is not working with filepath.Join, manually put nsCsv under ignrOut.
-			// if !strings.Contains(nsCsv, ignrOut+"/") {
-			// 	nsCsv = filepath.Join(ignrOut, nsCsv)
-			// }
+			if !strings.Contains(nsCsv, ignrOut+"/") {
+				nsCsv = filepath.Join(ignrOut, nsCsv)
+			}
 
 			if rmSchemaColInIgn {
 
