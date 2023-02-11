@@ -6,8 +6,8 @@ require (
 	github.com/BurntSushi/toml v1.2.1
 	github.com/davecgh/go-spew v1.1.1
 	github.com/digisan/go-generics v0.3.2
-	github.com/digisan/gotk v0.3.1
-	github.com/digisan/logkit v0.2.1
+	github.com/digisan/gotk v0.3.2
+	github.com/digisan/logkit v0.2.2
 )
 
 require (
