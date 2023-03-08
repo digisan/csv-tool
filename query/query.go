@@ -13,8 +13,7 @@ import (
 	"github.com/BurntSushi/toml"
 	ct "github.com/digisan/csv-tool"
 	. "github.com/digisan/go-generics/v2"
-	fd "github.com/digisan/gotk/filedir"
-	gio "github.com/digisan/gotk/io"
+	fd "github.com/digisan/gotk/file-dir"
 	lk "github.com/digisan/logkit"
 )
 
@@ -298,7 +297,7 @@ func QueryFile(csv string, incCol bool, hdrNames []string, R rune, CGrp []Cond, 
 	in, err := os.ReadFile(csv)
 	lk.FailP1OnErr("%v", err)
 
-	gio.MustCreateDir(filepath.Dir(out))
+	fd.MustCreateDir(filepath.Dir(out))
 
 	fw, err := os.OpenFile(out, os.O_WRONLY|os.O_CREATE, 0666)
 	lk.FailP1OnErr("%v", err)

@@ -9,8 +9,7 @@ import (
 	ct "github.com/digisan/csv-tool"
 	qry "github.com/digisan/csv-tool/query"
 	. "github.com/digisan/go-generics/v2"
-	fd "github.com/digisan/gotk/filedir"
-	gio "github.com/digisan/gotk/io"
+	fd "github.com/digisan/gotk/file-dir"
 	lk "github.com/digisan/logkit"
 )
 
@@ -55,7 +54,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	}
 
 	if !fd.DirExists(outDir) {
-		gio.MustCreateDir(outDir)
+		fd.MustCreateDir(outDir)
 	}
 
 	inData, err := os.ReadFile(csv)
@@ -75,7 +74,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 
 			if rmSchemaColInIgn {
 
-				gio.MustCreateDir(filepath.Dir(nsCsv))
+				fd.MustCreateDir(filepath.Dir(nsCsv))
 				fw, err := os.OpenFile(nsCsv, os.O_WRONLY|os.O_CREATE, 0666)
 				lk.FailOnErr("%v @ %s", err, nsCsv)
 				defer fw.Close()
@@ -85,7 +84,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 				// fmt.Println(header, len(header))
 
 			} else {
-				gio.MustWriteFile(nsCsv, inData)
+				fd.MustWriteFile(nsCsv, inData)
 			}
 
 			return []string{}, []string{nsCsv}, nil
@@ -141,7 +140,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	for _, dir := range lvlDir {
 		toCsv := filepath.Join(dir, name)
 		splitFiles = append(splitFiles, toCsv)
-		gio.MustWriteFile(toCsv, hdrByte)
+		fd.MustWriteFile(toCsv, hdrByte)
 	}
 
 	// fetch line by line
@@ -173,7 +172,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 			}
 
 			line := []byte(strings.Join(items, ","))
-			gio.MustAppendFile(toCsv, line, true)
+			fd.MustAppendFile(toCsv, line, true)
 
 			return true, "", ""
 		},

@@ -12,8 +12,7 @@ import (
 	ct "github.com/digisan/csv-tool"
 	qry "github.com/digisan/csv-tool/query"
 	. "github.com/digisan/go-generics/v2"
-	fd "github.com/digisan/gotk/filedir"
-	gio "github.com/digisan/gotk/io"
+	fd "github.com/digisan/gotk/file-dir"
 	lk "github.com/digisan/logkit"
 )
 
@@ -70,7 +69,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	}
 
 	if !fd.DirExists(outDir) {
-		gio.MustCreateDir(outDir)
+		fd.MustCreateDir(outDir)
 	}
 
 	in, err := os.ReadFile(csv)
@@ -89,13 +88,13 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 			nsCsv := filepath.Clean(filepath.Join(out, ignoredOut, basename))
 
 			if rmSchemaColInIgn {
-				gio.MustCreateDir(filepath.Dir(nsCsv))
+				fd.MustCreateDir(filepath.Dir(nsCsv))
 				fw, err := os.OpenFile(nsCsv, os.O_WRONLY|os.O_CREATE, 0666)
 				lk.FailOnErr("%v @ %s", err, nsCsv)
 				qry.Subset(in, false, schema, false, nil, fw)
 				fw.Close()
 			} else {
-				gio.MustWriteFile(nsCsv, in)
+				fd.MustWriteFile(nsCsv, in)
 			}
 
 			return []string{}, []string{nsCsv}, nil
@@ -146,13 +145,13 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 			nsCsv := filepath.Join(prevpath, ignoredOutInfo, ignoredInfo)
 
 			if rmSchemaColInIgn {
-				gio.MustCreateDir(filepath.Dir(nsCsv))
+				fd.MustCreateDir(filepath.Dir(nsCsv))
 				fw, err := os.OpenFile(nsCsv, os.O_WRONLY|os.O_CREATE, 0666)
 				lk.FailOnErr("%v @ %s", err, nsCsv)
 				qry.Subset(in, false, schema, false, nil, fw)
 				fw.Close()
 			} else {
-				gio.MustWriteFile(nsCsv, in)
+				fd.MustWriteFile(nsCsv, in)
 			}
 
 			ignoredFiles = append(ignoredFiles, nsCsv)
@@ -191,7 +190,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 			)
 
 			if rl == nSchema {
-				gio.MustWriteFile(outcsv, wBuf.Bytes())
+				fd.MustWriteFile(outcsv, wBuf.Bytes())
 				splitFiles = append(splitFiles, outcsv)
 			}
 
@@ -229,7 +228,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 
 				if rl == nSchema {
 					mtx.Lock()
-					gio.MustWriteFile(outcsv, wBuf.Bytes())
+					fd.MustWriteFile(outcsv, wBuf.Bytes())
 					splitFiles = append(splitFiles, outcsv)
 					mtx.Unlock()
 				}

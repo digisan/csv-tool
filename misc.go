@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	gio "github.com/digisan/gotk/io"
+	fd "github.com/digisan/gotk/file-dir"
 	lk "github.com/digisan/logkit"
 )
 
@@ -23,9 +23,9 @@ var (
 	failOnErr      = lk.FailOnErr
 	failP1OnErr    = lk.FailP1OnErr
 	failOnErrWhen  = lk.FailOnErrWhen
-	mustCreateDir  = gio.MustCreateDir
-	mustWriteFile  = gio.MustWriteFile
-	mustAppendFile = gio.MustAppendFile
+	mustCreateDir  = fd.MustCreateDir
+	mustWriteFile  = fd.MustWriteFile
+	mustAppendFile = fd.MustAppendFile
 )
 
 func isWrappedWith(s, prefix, suffix string) bool {

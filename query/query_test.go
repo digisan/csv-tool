@@ -12,8 +12,7 @@ import (
 
 	ct "github.com/digisan/csv-tool"
 	. "github.com/digisan/go-generics/v2"
-	fd "github.com/digisan/gotk/filedir"
-	gio "github.com/digisan/gotk/io"
+	fd "github.com/digisan/gotk/file-dir"
 	"github.com/digisan/gotk/track"
 	lk "github.com/digisan/logkit"
 )
@@ -60,7 +59,7 @@ func TestSubset(t *testing.T) {
 			lk.FailOnErr("%v", err)
 
 			out := "subset-out/"
-			gio.MustCreateDir(out)
+			fd.MustCreateDir(out)
 			file4w, err := os.OpenFile(filepath.Join(out, file.Name()), os.O_WRONLY|os.O_CREATE, 0644)
 			lk.FailOnErr("%v", err)
 			defer file4w.Close()
@@ -74,7 +73,7 @@ func TestSubset(t *testing.T) {
 			)
 
 			out1 := "subset-out1/"
-			gio.MustCreateDir(out1)
+			fd.MustCreateDir(out1)
 			file4w1, err := os.OpenFile(filepath.Join(out1, file.Name()), os.O_WRONLY|os.O_CREATE, 0644)
 			lk.FailOnErr("%v", err)
 			defer file4w1.Close()
@@ -118,7 +117,7 @@ func TestSelect(t *testing.T) {
 			in, err := os.ReadFile(fName)
 			lk.FailOnErr("%v", err)
 
-			gio.MustWriteFile("out/"+file.Name(), []byte{})
+			fd.MustWriteFile("out/"+file.Name(), []byte{})
 			file4w, err := os.OpenFile("out/"+file.Name(), os.O_WRONLY|os.O_CREATE, 0666)
 			lk.FailOnErr("%v", err)
 			defer file4w.Close()

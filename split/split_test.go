@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	fd "github.com/digisan/gotk/filedir"
+	fd "github.com/digisan/gotk/file-dir"
 )
 
 func TestSplit(t *testing.T) {
