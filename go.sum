@@ -3,10 +3,10 @@ github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbi
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/digisan/go-generics v0.3.3 h1:0C5E6Wl3rmRVi3KZ1Y8y0GVSq04wu41Ps2X1kMZhUV4=
-github.com/digisan/go-generics v0.3.3/go.mod h1:VL55aCSjSaDHPbLtQyGg5fFFwG9SSHiAO/Zke/Tkhcg=
-github.com/digisan/gotk v0.3.4 h1:BoSpC0RFcFM6/f3qgyDId0s4UW4EYVM6jG2B3H0/r14=
-github.com/digisan/gotk v0.3.4/go.mod h1:dZ4BQTQpiFRTLPohMzpff0SyseHxCyiO1o3Fp88CBEg=
+github.com/digisan/go-generics v0.3.5 h1:MqMxG1OnnAbwBtkeKFzu3teBqb9BkhnLRyiW2OLZz28=
+github.com/digisan/go-generics v0.3.5/go.mod h1:VL55aCSjSaDHPbLtQyGg5fFFwG9SSHiAO/Zke/Tkhcg=
+github.com/digisan/gotk v0.3.5 h1:ujbUkjz7ht2Y8/zBAw/JMzndN0Z/0JNZ+eNe27Sqs/c=
+github.com/digisan/gotk v0.3.5/go.mod h1:YHH/Me+CTv3CipbK0jBdVhxovEhKvC6axuT7EhAHB0U=
 github.com/digisan/logkit v0.2.3 h1:LA0LhEUUGnwqqh4i8ACp5CX3TLoY85V3xMzYizQ2t94=
 github.com/digisan/logkit v0.2.3/go.mod h1:VYiNEjfTRz8BY8SFdtHbB5s+M9e06ZuJyzyft81O1J4=
 github.com/gookit/color v1.5.2 h1:uLnfXcaFjlrDnQDT+NCBcfhrXqYTx/rcCa6xn01Y8yI=
