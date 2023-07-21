@@ -34,7 +34,7 @@ func Column(r io.Reader, idx int) (hdr string, items []string, err error) {
 		return "", nil, fEf("idx(%d) is out of index range", idx)
 	}
 
-	return CsvReader(r, func(i, n int, headers, items []string) (ok bool, hdrline, row string) {
+	return CsvReader(r, func(i, n int, headers, items []string) (ok bool, hdr, row string) {
 		return true, headers[idx], items[idx]
 	}, true, true, nil)
 }

@@ -150,7 +150,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	}
 	ct.Scan(
 		inData,
-		func(i, n int, headers, items []string) (ok bool, hdrline string, row string) {
+		func(i, n int, headers, items []string) (ok bool, hdr string, row string) {
 
 			schemaVal := []string{}
 			for _, iSch := range iSchema {

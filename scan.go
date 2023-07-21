@@ -55,10 +55,60 @@ func FileInfo(path string) ([]string, int, error) {
 	return Info(csvFile)
 }
 
+func HeaderHasAll(r io.Reader, hdrItems ...string) (bool, error) {
+	headers, _, err := Info(r)
+	if err != nil {
+		return false, err
+	}
+	for _, item := range hdrItems {
+		if NotIn(item, headers...) {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
+func FileHeaderHasAll(path string, hdrItems ...string) (bool, error) {
+	csvFile, err := os.Open(path)
+	if err != nil {
+		if csvFile != nil {
+			csvFile.Close()
+		}
+		return false, err
+	}
+	defer csvFile.Close()
+	return HeaderHasAll(csvFile, hdrItems...)
+}
+
+func HeaderHasAny(r io.Reader, hdrItems ...string) (bool, error) {
+	headers, _, err := Info(r)
+	if err != nil {
+		return false, err
+	}
+	for _, item := range hdrItems {
+		if In(item, headers...) {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func FileHeaderHasAny(path string, hdrItems ...string) (bool, error) {
+	csvFile, err := os.Open(path)
+	if err != nil {
+		if csvFile != nil {
+			csvFile.Close()
+		}
+		return false, err
+	}
+	defer csvFile.Close()
+	return HeaderHasAny(csvFile, hdrItems...)
+}
+
 // CsvReader : if [f arg: i==-1], it is pure HeaderRow csv
 func CsvReader(
 	r io.Reader,
-	f func(i, n int, headers, items []string) (ok bool, hdrline, row string),
+	f func(i, n int, headers, items []string) (ok bool, hdr, row string),
 	keepOriHdr bool,
 	keepAnyRow bool,
 	w io.Writer,
@@ -123,9 +173,9 @@ func CsvReader(
 	}
 
 	for i, d := range content {
-		if ok, hdrline, row := f(i, N, headers, d); ok {
-			if hdrline != "" {
-				hdrLine = hdrline
+		if ok, hdr, row := f(i, N, headers, d); ok {
+			if hdr != "" {
+				hdrLine = hdr
 			}
 			if keepAnyRow {
 				allRows = append(allRows, row)
@@ -140,8 +190,8 @@ func CsvReader(
 SAVE:
 	// save
 	if !IsNil(w) {
-		csvdata := []byte(sTrimSuffix(hdrLine+"\n"+sJoin(allRows, "\n"), "\n"))
-		_, err = w.Write(csvdata)
+		data := []byte(sTrimSuffix(hdrLine+"\n"+sJoin(allRows, "\n"), "\n"))
+		_, err = w.Write(data)
 		failP1OnErr("%v", err)
 	}
 
@@ -149,27 +199,27 @@ SAVE:
 }
 
 // Scan : if [f arg: i==-1], it is pure HeaderRow csv
-func Scan(in []byte, f func(i, n int, headers, items []string) (ok bool, hdrline, row string), keepOriHdr bool, w io.Writer) (string, []string, error) {
+func Scan(in []byte, f func(i, n int, headers, items []string) (ok bool, hdr, row string), keepOriHdr bool, w io.Writer) (string, []string, error) {
 	return CsvReader(bytes.NewReader(in), f, keepOriHdr, false, w)
 }
 
 // ScanFile :
-func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, hdrline, row string), keepOriHdr bool, outpath string) (string, []string, error) {
+func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, hdr, row string), keepOriHdr bool, outPath string) (string, []string, error) {
 
 	fr, err := os.Open(path)
-	failP1OnErr("csvpath: File is not found || wrong root : %v", err)
+	failP1OnErr("csvPath: File is not found || wrong root : %v", err)
 	defer fr.Close()
 
 	var fw *os.File = nil
 
-	if trimBlank(outpath) != "" {
-		mustCreateDir(filepath.Dir(outpath))
-		fw, err = os.OpenFile(outpath, os.O_WRONLY|os.O_CREATE, 0666)
-		failP1OnErr("outpath: File is not found || wrong root : %v", err)
+	if trimBlank(outPath) != "" {
+		mustCreateDir(filepath.Dir(outPath))
+		fw, err = os.OpenFile(outPath, os.O_WRONLY|os.O_CREATE, 0666)
+		failP1OnErr("outPath: File is not found || wrong root : %v", err)
 		defer fw.Close()
 	}
 
 	hRow, rows, err := CsvReader(fr, f, keepOriHdr, false, fw)
-	failOnErrWhen(rows == nil, "%v @ %s", err, outpath) // go internal csv func error
+	failOnErrWhen(rows == nil, "%v @ %s", err, outPath) // go internal csv func error
 	return hRow, rows, err
 }

@@ -9,8 +9,8 @@ import (
 
 func TestSplit(t *testing.T) {
 	type args struct {
-		csvfile    string
-		outdir     string
+		csv        string
+		out        string
 		categories []string
 	}
 	tests := []struct {
@@ -23,8 +23,8 @@ func TestSplit(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				csvfile:    "./data/qldStudent.csv",
-				outdir:     "out",
+				csv:        "./data/qldStudent.csv",
+				out:        "out",
 				categories: []string{"School", "YrLevel", "Domain"},
 			},
 			want:    []string{},
@@ -33,8 +33,8 @@ func TestSplit(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				csvfile:    "./data/sub/itemResults0.csv",
-				outdir:     "out",
+				csv:        "./data/sub/itemResults0.csv",
+				out:        "out",
 				categories: []string{"School", "YrLevel", "Domain"},
 			},
 			want:    []string{},
@@ -43,8 +43,8 @@ func TestSplit(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				csvfile:    "./data/sub/itemResults111.csv",
-				outdir:     "out",
+				csv:        "./data/sub/itemResults111.csv",
+				out:        "out",
 				categories: []string{"School", "YrLevel", "Domain"},
 			},
 			want:    []string{},
@@ -53,8 +53,8 @@ func TestSplit(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				csvfile:    "./data/sub/itemResults110.csv",
-				outdir:     "out",
+				csv:        "./data/sub/itemResults110.csv",
+				out:        "out",
 				categories: []string{"School", "YrLevel", "Domain"},
 			},
 			want:    []string{},
@@ -63,8 +63,8 @@ func TestSplit(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				csvfile:    "./data/sub/itemResults101.csv",
-				outdir:     "out",
+				csv:        "./data/sub/itemResults101.csv",
+				out:        "out",
 				categories: []string{"School", "YrLevel", "Domain"},
 			},
 			want:    []string{},
@@ -73,8 +73,8 @@ func TestSplit(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				csvfile:    "/home/qingmiao/Desktop/nrt-issue/csv-tool/data/sub/itemResults100.csv",
-				outdir:     "out",
+				csv:        "/home/qingmiao/Desktop/nrt-issue/csv-tool/data/sub/itemResults100.csv",
+				out:        "out",
 				categories: []string{"School", "YrLevel", "Domain"},
 			},
 			want:    []string{},
@@ -83,8 +83,8 @@ func TestSplit(t *testing.T) {
 		// {
 		// 	name: "OK",
 		// 	args: args{
-		// 		csvfile:    "./data/data.csv",
-		// 		outdir:     "outmedium",
+		// 		csv:    "./data/data.csv",
+		// 		out:     "outmedium",
 		// 		categories: []string{"School", "Domain", "YrLevel"},
 		// 	},
 		// 	want:    []string{},
@@ -93,8 +93,8 @@ func TestSplit(t *testing.T) {
 		// {
 		// 	name: "OK",
 		// 	args: args{
-		// 		csvfile:    "./data/big/itemResults.csv",
-		// 		outdir:     "outbig",
+		// 		csv:    "./data/big/itemResults.csv",
+		// 		out:     "outbig",
 		// 		categories: []string{"School", "Domain", "YrLevel"},
 		// 	},
 		// 	want:    []string{},
@@ -109,9 +109,9 @@ func TestSplit(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			splitfiles, ignoredfiles, _ := Split(tt.args.csvfile, tt.args.outdir, tt.args.categories...)
-			fmt.Println(len(splitfiles))
-			fmt.Println(len(ignoredfiles))
+			splitFiles, ignoredFiles, _ := Split(tt.args.csv, tt.args.out, tt.args.categories...)
+			fmt.Println(len(splitFiles))
+			fmt.Println(len(ignoredFiles))
 		})
 	}
 

@@ -106,13 +106,13 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	if !sglProc && len(in) < 1024*1024*10 {
 		parallel = true
 	}
-	// fmt.Printf("%s running on parallel? %v\n", csvfile, parallel)
+	// fmt.Printf("%s running on parallel? %v\n", csvFile, parallel)
 
 	splitFiles, ignoredFiles = []string{}, []string{}
 	return splitFiles, ignoredFiles, split(0, in, outDir)
 }
 
-func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
+func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 
 	if rl >= nSchema {
 		return nil
@@ -142,7 +142,7 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 			nsCsvDir, _ := fd.RelPath(csvDir, false)
 			ignoredInfo := fmt.Sprintf("%s(%s).csv", strings.TrimSuffix(basename, ".csv"), nsCsvDir)
 			ignoredInfo = strings.ReplaceAll(ignoredInfo, "/", "~")
-			nsCsv := filepath.Join(prevpath, ignoredOutInfo, ignoredInfo)
+			nsCsv := filepath.Join(prevPath, ignoredOutInfo, ignoredInfo)
 
 			if rmSchemaColInIgn {
 				fd.MustCreateDir(filepath.Dir(nsCsv))
@@ -164,19 +164,19 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 
 	// --------------- end --------------- //
 
-	unirows := Settify(rows...)
-	FilterFast(&unirows, func(i int, e string) bool { return len(strings.TrimSpace(e)) > 0 })
+	uniRows := Settify(rows...)
+	FilterFast(&uniRows, func(i int, e string) bool { return len(strings.TrimSpace(e)) > 0 })
 
 	// Safe Mode, But Slow //
 	if !parallel {
 
-		for _, catItem := range unirows {
+		for _, catItem := range uniRows {
 
-			outcsv := outDir
+			csvOut := outDir
 			for _, pcItem := range pCatItems {
-				outcsv += pcItem + "/"
+				csvOut += pcItem + "/"
 			}
-			outcsv += catItem + "/" + basename
+			csvOut += catItem + "/" + basename
 
 			wBuf := &bytes.Buffer{}
 
@@ -190,11 +190,11 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 			)
 
 			if rl == nSchema {
-				fd.MustWriteFile(outcsv, wBuf.Bytes())
-				splitFiles = append(splitFiles, outcsv)
+				fd.MustWriteFile(csvOut, wBuf.Bytes())
+				splitFiles = append(splitFiles, csvOut)
 			}
 
-			split(rl, wBuf.Bytes(), filepath.Dir(outcsv), append(pCatItems, catItem)...)
+			split(rl, wBuf.Bytes(), filepath.Dir(csvOut), append(pCatItems, catItem)...)
 		}
 	}
 
@@ -202,18 +202,18 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 	if parallel {
 
 		wg := &sync.WaitGroup{}
-		wg.Add(len(unirows))
+		wg.Add(len(uniRows))
 
-		for _, catItem := range unirows {
+		for _, catItem := range uniRows {
 
 			go func(catItem string) {
 				defer wg.Done()
 
-				outcsv := outDir
+				csvOut := outDir
 				for _, pcItem := range pCatItems {
-					outcsv += pcItem + "/"
+					csvOut += pcItem + "/"
 				}
-				outcsv += catItem + "/" + basename
+				csvOut += catItem + "/" + basename
 
 				wBuf := &bytes.Buffer{}
 
@@ -228,12 +228,12 @@ func split(rl int, in []byte, prevpath string, pCatItems ...string) error {
 
 				if rl == nSchema {
 					mtx.Lock()
-					fd.MustWriteFile(outcsv, wBuf.Bytes())
-					splitFiles = append(splitFiles, outcsv)
+					fd.MustWriteFile(csvOut, wBuf.Bytes())
+					splitFiles = append(splitFiles, csvOut)
 					mtx.Unlock()
 				}
 
-				split(rl, wBuf.Bytes(), filepath.Dir(outcsv), append(pCatItems, catItem)...)
+				split(rl, wBuf.Bytes(), filepath.Dir(csvOut), append(pCatItems, catItem)...)
 
 			}(catItem)
 		}

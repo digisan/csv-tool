@@ -5,15 +5,15 @@ import (
 )
 
 // Create : create csv file with input headers
-func Create(outcsv string, hdrNames ...string) (string, error) {
+func Create(csvOut string, hdrNames ...string) (string, error) {
 	if len(hdrNames) == 0 {
-		return "", fEf("No Headers Provided")
+		return "", fEf("no headers provided")
 	}
 
 	headers := Map(hdrNames, func(i int, e string) string { return ItemEsc(e) })
 	hdrRow := sJoin(headers, ",")
-	if outcsv != "" {
-		mustWriteFile(outcsv, []byte(hdrRow))
+	if csvOut != "" {
+		mustWriteFile(csvOut, []byte(hdrRow))
 	}
 	return hdrRow, nil
 }
@@ -28,8 +28,8 @@ func Append(path string, validate bool, rows ...string) {
 	}
 }
 
-// Combine : extend columns, linkHeaders combination must be UNIQUE in csvfileA & csvfileB
-func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outpath string) {
+// Combine : extend columns, linkHeaders combination must be UNIQUE in csvA & csvB
+func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outPath string) {
 
 	headersA, _, err := FileInfo(pathA)
 	failOnErr("%v", err)
@@ -39,7 +39,7 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outp
 	failOnErr("%v", err)
 	failOnErrWhen(!SupEq(headersB, linkHeaders), "%v", fEf("headers of csv-B must have all link-headers"))
 
-	Create(outpath, Settify(Union(headersA, headersB)...)...)
+	Create(outPath, Settify(Union(headersA, headersB)...)...)
 
 	var (
 		lkIndicesA = Map(linkHeaders, func(i int, e string) int { return IdxOf(e, headersA...) })
@@ -99,5 +99,5 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outp
 		}
 	}
 
-	Append(outpath, true, rowsC...)
+	Append(outPath, true, rowsC...)
 }

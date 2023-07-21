@@ -9,8 +9,8 @@ import (
 
 func TestFileColumn(t *testing.T) {
 	type args struct {
-		csvpath string
-		idx     int
+		csv string
+		idx int
 	}
 	tests := []struct {
 		name      string
@@ -23,8 +23,8 @@ func TestFileColumn(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				csvpath: "./data/data.csv",
-				idx:     1,
+				csv: "./data/data.csv",
+				idx: 1,
 			},
 			wantHdr:   `Id,"Name,Name1",Age,"Na,me"`,
 			wantItems: []string{`Ahmad,Ahmad`, "Hello", `Test1`, `Test2`, `[""abc]`},
@@ -33,7 +33,7 @@ func TestFileColumn(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotHdr, gotItems, err := FileColumn(tt.args.csvpath, tt.args.idx)
+			gotHdr, gotItems, err := FileColumn(tt.args.csv, tt.args.idx)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FileColumn() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -50,8 +50,8 @@ func TestFileColumn(t *testing.T) {
 
 func TestFileColAttr(t *testing.T) {
 	type args struct {
-		csvpath string
-		idx     int
+		csv string
+		idx int
 	}
 	tests := []struct {
 		name    string
@@ -63,8 +63,8 @@ func TestFileColAttr(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				csvpath: "./data/itemResults999.csv",
-				idx:     10,
+				csv: "./data/itemResults999.csv",
+				idx: 10,
 			},
 			want:    nil,
 			wantErr: false,
@@ -72,8 +72,8 @@ func TestFileColAttr(t *testing.T) {
 		{
 			name: "OK",
 			args: args{
-				csvpath: "./data/Substrands.csv",
-				idx:     0,
+				csv: "./data/Substrands.csv",
+				idx: 0,
 			},
 			want:    nil,
 			wantErr: false,
@@ -81,7 +81,7 @@ func TestFileColAttr(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			spew.Dump(FileColAttr(tt.args.csvpath, tt.args.idx))
+			spew.Dump(FileColAttr(tt.args.csv, tt.args.idx))
 		})
 	}
 }

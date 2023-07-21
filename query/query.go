@@ -24,12 +24,12 @@ func GetRepeated(csv, out string, f func(rRepCnt int) bool) (string, []string, e
 		return "", nil, err
 	}
 	return ct.ScanFile(csv,
-		func(i, n int, headers, items []string) (ok bool, hdrline string, row string) {
+		func(i, n int, headers, items []string) (ok bool, hdr string, row string) {
 			md5s := Map(items, func(i int, e string) string { return fmt.Sprint(md5.Sum([]byte(e))) })
-			rowhash := strings.Join(md5s, ",")
+			rowHash := strings.Join(md5s, ",")
 			headers4w := Map(headers, func(i int, e string) string { return ct.ItemEsc(e) })
 			items4w := Map(items, func(i int, e string) string { return ct.ItemEsc(e) })
-			return f(mHashCnt[rowhash]), strings.Join(headers4w, ","), strings.Join(items4w, ",")
+			return f(mHashCnt[rowHash]), strings.Join(headers4w, ","), strings.Join(items4w, ",")
 		},
 		true,
 		out,
@@ -50,9 +50,9 @@ func Unique(csv, out string) (string, []string, map[string]int, error) {
 		csv,
 		func(idx, cnt int, headers, items []string) (bool, string, string) {
 			md5s := Map(items, func(i int, e string) string { return fmt.Sprint(md5.Sum([]byte(e))) })
-			rowhash := strings.Join(md5s, ",")
-			_, ok := mHashCnt[rowhash]
-			defer func() { mHashCnt[rowhash]++ }()
+			rowHash := strings.Join(md5s, ",")
+			_, ok := mHashCnt[rowHash]
+			defer func() { mHashCnt[rowHash]++ }()
 
 			if ok {
 				return false, "", ""
@@ -145,7 +145,7 @@ type Cond struct {
 }
 
 // Select : R : [&, |]; condition relation : [=, !=, >, <, >=, <=]
-// [=, !=] only apply to string comparasion, [>, <, >=, <=] apply to number comparasion
+// [=, !=] only apply to string comparison, [>, <, >=, <=] apply to number comparison
 func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, error) {
 
 	lk.FailP1OnErrWhen(NotIn(R, '&', '|'), "%v", fmt.Errorf("[R] can only be [&, |]"))
