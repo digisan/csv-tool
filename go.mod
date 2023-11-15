@@ -7,9 +7,9 @@ toolchain go1.21.0
 require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/davecgh/go-spew v1.1.1
-	github.com/digisan/go-generics v0.4.1
-	github.com/digisan/gotk v0.4.9
-	github.com/digisan/logkit v0.2.13
+	github.com/digisan/go-generics v0.4.2
+	github.com/digisan/gotk v0.4.11
+	github.com/digisan/logkit v0.2.14
 )
 
 require (
