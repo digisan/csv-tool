@@ -11,7 +11,7 @@ import (
 	"time"
 
 	ct "github.com/digisan/csv-tool"
-	. "github.com/digisan/go-generics/v2"
+	. "github.com/digisan/go-generics"
 	fd "github.com/digisan/gotk/file-dir"
 	"github.com/digisan/gotk/track"
 	lk "github.com/digisan/logkit"

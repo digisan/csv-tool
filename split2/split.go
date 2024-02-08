@@ -8,7 +8,7 @@ import (
 
 	ct "github.com/digisan/csv-tool"
 	qry "github.com/digisan/csv-tool/query"
-	. "github.com/digisan/go-generics/v2"
+	. "github.com/digisan/go-generics"
 	fd "github.com/digisan/gotk/file-dir"
 	lk "github.com/digisan/logkit"
 )
