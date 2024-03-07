@@ -1,13 +1,13 @@
 module github.com/digisan/csv-tool
 
-go 1.22.0
+go 1.22.1
 
 require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/digisan/go-generics v0.5.1
 	github.com/digisan/gotk v0.5.1
-	github.com/digisan/logkit v0.3.1
+	github.com/digisan/logkit v0.3.3
 )
 
 require (

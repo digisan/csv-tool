@@ -26,7 +26,7 @@ func TestSliceEq(t *testing.T) {
 func TestUnique(t *testing.T) {
 
 	defer track.TrackTime(time.Now())
-	lk.Log2F(true, "./TestSubset.log")
+	lk.Log2F(true, true, "./TestSubset.log")
 
 	Unique("../data/data.csv", "../out/data-uni.csv")
 	GetRepeated("../data/data.csv", "../out/data-rep.csv", func(rRepCnt int) bool { return rRepCnt >= 2 })
@@ -35,7 +35,7 @@ func TestUnique(t *testing.T) {
 func TestSubset(t *testing.T) {
 
 	defer track.TrackTime(time.Now())
-	lk.Log2F(true, "./TestSubset.log")
+	lk.Log2F(true, true, "./TestSubset.log")
 
 	dir := "../data/"
 	files, err := os.ReadDir(dir)
@@ -92,7 +92,7 @@ func TestSubset(t *testing.T) {
 func TestSelect(t *testing.T) {
 
 	defer track.TrackTime(time.Now())
-	lk.Log2F(true, "./TestSelect.log")
+	lk.Log2F(true, true, "./TestSelect.log")
 
 	dir := "../data/"
 	files, err := os.ReadDir(dir)
@@ -135,7 +135,7 @@ func TestSelect(t *testing.T) {
 func TestQuery(t *testing.T) {
 
 	defer track.TrackTime(time.Now())
-	lk.Log2F(true, "./TestQuery.log")
+	lk.Log2F(true, true, "./TestQuery.log")
 
 	dir := "../data"
 	files, err := os.ReadDir(dir)

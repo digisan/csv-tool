@@ -6,8 +6,8 @@ github.com/digisan/go-generics v0.5.1 h1:gHROrj5IZUC5JAPXSNEpD0rguQRmV/mG+JiVclu
 github.com/digisan/go-generics v0.5.1/go.mod h1:9MYOVhv77wqWetVAc/9cRopVl7vWx+ngykZWyUSBuzM=
 github.com/digisan/gotk v0.5.1 h1:XRhlzSfk9PriZvRexKg21DU63gZs9uQluORJS5uc2+0=
 github.com/digisan/gotk v0.5.1/go.mod h1:HHgoQa/V1hDeKfIKEg+qFGuBTA90eqKmDFu3r81lJdU=
-github.com/digisan/logkit v0.3.1 h1:2RyvQzgesRmU4Vrjmp0WG8HzN7aMDbEJfIRjm2FVDc4=
-github.com/digisan/logkit v0.3.1/go.mod h1:S1Fhb1GVOXlgRRoJ6gy7CLmTZNQXm+zd01Ysjx7uuj4=
+github.com/digisan/logkit v0.3.3 h1:tABkW5OH+x8Ei0rLb1jdqmqnujVVLRx+BdwErH+OBL0=
+github.com/digisan/logkit v0.3.3/go.mod h1:57yv9bsI8zVfgvT5epz7ASwUnXfBMpj3+YNnCQIpa0s=
 github.com/gookit/color v1.5.4 h1:FZmqs7XOyGgCAxmWyPslpiok1k05wmY3SJTytgvYFs0=
 github.com/gookit/color v1.5.4/go.mod h1:pZJOeOS8DM43rXbp4AZo1n9zCU2qjpcRko0b6/QJi9w=
 github.com/h2non/filetype v1.1.3 h1:FKkx9QbD7HR/zjK1Ia5XiBsq9zdLi5Kf3zGyFTAFkGg=
