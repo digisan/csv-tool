@@ -1,19 +1,23 @@
 package csvtool
 
 import (
+	"fmt"
+	"strings"
+
 	. "github.com/digisan/go-generics"
+	fd "github.com/digisan/gotk/file-dir"
 )
 
 // Create : create csv file with input headers
 func Create(csvOut string, hdrNames ...string) (string, error) {
 	if len(hdrNames) == 0 {
-		return "", fEf("no headers provided")
+		return "", fmt.Errorf("no headers provided")
 	}
 
 	headers := Map(hdrNames, func(i int, e string) string { return ItemEsc(e) })
-	hdrRow := sJoin(headers, ",")
+	hdrRow := strings.Join(headers, ",")
 	if csvOut != "" {
-		mustWriteFile(csvOut, []byte(hdrRow))
+		fd.MustWriteFile(csvOut, []byte(hdrRow))
 	}
 	return hdrRow, nil
 }
@@ -21,7 +25,7 @@ func Create(csvOut string, hdrNames ...string) (string, error) {
 // Append : extend rows, append rows content to csv file
 func Append(path string, validate bool, rows ...string) {
 	if len(rows) > 0 {
-		mustAppendFile(path, []byte(sJoin(rows, "\n")), true)
+		fd.MustAppendFile(path, []byte(strings.Join(rows, "\n")), true)
 	}
 	if validate {
 		ScanFile(path, nil, true, "")
@@ -29,22 +33,30 @@ func Append(path string, validate bool, rows ...string) {
 }
 
 // Combine : extend columns, linkHeaders combination must be UNIQUE in csvA & csvB
-func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outPath string) {
+func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outPath string) error {
 
 	headersA, _, err := FileInfo(pathA)
-	failOnErr("%v", err)
-	failOnErrWhen(!SupEq(headersA, linkHeaders), "%v", fEf("headers of csv-A must have all link-headers"))
+	if err != nil {
+		return err
+	}
+	if !SupEq(headersA, linkHeaders) {
+		return fmt.Errorf("headers of csv-A must have all link-headers")
+	}
 
 	headersB, _, err := FileInfo(pathB)
-	failOnErr("%v", err)
-	failOnErrWhen(!SupEq(headersB, linkHeaders), "%v", fEf("headers of csv-B must have all link-headers"))
+	if err != nil {
+		return err
+	}
+	if !SupEq(headersB, linkHeaders) {
+		return fmt.Errorf("headers of csv-B must have all link-headers")
+	}
 
 	Create(outPath, Settify(Union(headersA, headersB)...)...)
 
 	var (
 		lkIndicesA = Map(linkHeaders, func(i int, e string) int { return IdxOf(e, headersA...) })
 		lkIndicesB = Map(linkHeaders, func(i int, e string) int { return IdxOf(e, headersB...) })
-		emptyComma = sRepeat(",", len(headersB)-len(linkHeaders))
+		emptyComma = strings.Repeat(",", len(headersB)-len(linkHeaders))
 		lkItemsGrp = [][]string{}
 		mAiBr      = make(map[int]string)
 	)
@@ -57,7 +69,7 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outP
 			lkItemsGrp = append(lkItemsGrp, lkrItems)
 
 			items4w := Map(items, func(i int, e string) string { return ItemEsc(e) })
-			return true, "", sJoin(items4w, ",")
+			return true, "", strings.Join(items4w, ",")
 		},
 		false,
 		"",
@@ -72,7 +84,7 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outP
 						func(i int, e string) bool { return NotIn(i, lkIndicesB...) },
 						func(i int, e string) string { return ItemEsc(e) },
 					)
-					mAiBr[iAtRowA] = sJoin(items4w, ",")
+					mAiBr[iAtRowA] = strings.Join(items4w, ",")
 					return false, "", ""
 				}
 			}
@@ -100,4 +112,5 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outP
 	}
 
 	Append(outPath, true, rowsC...)
+	return nil
 }

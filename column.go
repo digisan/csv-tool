@@ -1,6 +1,7 @@
 package csvtool
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -31,7 +32,7 @@ func Column(r io.Reader, idx int) (hdr string, items []string, err error) {
 	}
 
 	if idx >= len(headers) {
-		return "", nil, fEf("idx(%d) is out of index range", idx)
+		return "", nil, fmt.Errorf("idx(%d) is out of index range", idx)
 	}
 
 	return CsvReader(r, func(i, n int, headers, items []string) (ok bool, hdr, row string) {

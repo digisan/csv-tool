@@ -2,5 +2,5 @@
 
 csv-tool
 
-go upgrade to 1.22.0
+go upgrade to 1.22.1
 version => v0.3.0

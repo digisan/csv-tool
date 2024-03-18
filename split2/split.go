@@ -10,7 +10,6 @@ import (
 	qry "github.com/digisan/csv-tool/query"
 	. "github.com/digisan/go-generics"
 	fd "github.com/digisan/gotk/file-dir"
-	lk "github.com/digisan/logkit"
 )
 
 var (
@@ -76,11 +75,15 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 
 				fd.MustCreateDir(filepath.Dir(nsCsv))
 				fw, err := os.OpenFile(nsCsv, os.O_WRONLY|os.O_CREATE, 0666)
-				lk.FailOnErr("%v @ %s", err, nsCsv)
+				if err != nil {
+					return nil, nil, err
+				}
 				defer fw.Close()
 
 				_, _, err = qry.Subset(inData, false, schema, false, nil, fw)
-				lk.FailOnErr("Subset %v @ %s", err, nsCsv)
+				if err != nil {
+					return nil, nil, err
+				}
 				// fmt.Println(header, len(header))
 
 			} else {
@@ -103,7 +106,9 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	for _, hdr := range schema {
 		idx := IdxOf(hdr, headers...)
 		h, items, err := ct.Column(in, idx)
-		lk.FailOnErr("%v", err)
+		if err != nil {
+			return nil, nil, err
+		}
 
 		items = Settify(items...)
 		fmt.Sprintln(" --", h, items)

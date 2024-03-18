@@ -90,7 +90,9 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 			if rmSchemaColInIgn {
 				fd.MustCreateDir(filepath.Dir(nsCsv))
 				fw, err := os.OpenFile(nsCsv, os.O_WRONLY|os.O_CREATE, 0666)
-				lk.FailOnErr("%v @ %s", err, nsCsv)
+				if err != nil {
+					return nil, nil, err
+				}
 				qry.Subset(in, false, schema, false, nil, fw)
 				fw.Close()
 			} else {
@@ -134,8 +136,10 @@ func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 	// --------------- not splittable --------------- //
 	// empty / empty content / missing needed categories
 	if func() bool {
+
 		mtx.Lock()
 		defer mtx.Unlock()
+
 		if len(rows) == 0 || (len(rows) > 0 && len(strings.Trim(rows[0], " \t")) == 0) {
 
 			ignoredOutInfo := fmt.Sprintf("%s(missing %s)", filepath.Base(ignoredOut), cat)
@@ -147,7 +151,10 @@ func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 			if rmSchemaColInIgn {
 				fd.MustCreateDir(filepath.Dir(nsCsv))
 				fw, err := os.OpenFile(nsCsv, os.O_WRONLY|os.O_CREATE, 0666)
-				lk.FailOnErr("%v @ %s", err, nsCsv)
+				if err != nil {
+					lk.Warn("%v", err)
+					return true
+				}
 				qry.Subset(in, false, schema, false, nil, fw)
 				fw.Close()
 			} else {
@@ -158,6 +165,7 @@ func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 			return true
 		}
 		return false
+
 	}() {
 		return nil
 	}

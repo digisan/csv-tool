@@ -3,19 +3,22 @@ package csvtool
 import (
 	"bytes"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
 	. "github.com/digisan/go-generics"
+	fd "github.com/digisan/gotk/file-dir"
+	lk "github.com/digisan/logkit"
 )
 
 func ItemEsc(item string) string {
 	if len(item) > 1 {
-		hasComma, hasDQ, hasLF := sContains(item, ","), sContains(tryStripDQ(item), "\""), sContains(item, "\n")
+		hasComma, hasDQ, hasLF := strings.Contains(item, ","), strings.Contains(tryStripDQ(item), "\""), strings.Contains(item, "\n")
 		if hasDQ {
-			item = sReplaceAll(item, "\"", "\"\"")
+			item = strings.ReplaceAll(item, "\"", "\"\"")
 		}
 		if hasComma || hasLF || hasDQ {
 			item = tryWrapWithDQ(item)
@@ -120,13 +123,12 @@ func CsvReader(
 	}
 
 	content, err := csv.NewReader(r).ReadAll()
-	// failOnErr("%v", err)
 	if err != nil {
 		return "", nil, err
 	}
 
 	if len(content) == 0 {
-		return "", []string{}, fEf("FILE_EMPTY")
+		return "", []string{}, fmt.Errorf("FILE_EMPTY")
 	}
 
 	hdrOnly := false
@@ -137,8 +139,8 @@ func CsvReader(
 	headers := make([]string, 0)
 	for i, hdrItem := range content[0] {
 		if hdrItem == "" {
-			hdrItem = fSf("column_%d", i)
-			warnOnErr("%v: - column[%d] is empty, mark [%s]", fEf("CSV_COLUMN_HEADER_EMPTY"), i, hdrItem)
+			hdrItem = fmt.Sprintf("column_%d", i)
+			lk.WarnOnErr("%v: - column[%d] is empty, mark [%s]", fmt.Errorf("CSV_COLUMN_HEADER_EMPTY"), i, hdrItem)
 		}
 		headers = append(headers, ItemEsc(hdrItem)) // default is original headers
 	}
@@ -152,10 +154,10 @@ func CsvReader(
 	// if f is NOT provided, we select all rows including headers //
 	if f == nil {
 		if len(content) > 0 || keepOriHdr {
-			hdrLine = sJoin(headers, ",")
+			hdrLine = strings.Join(headers, ",")
 		}
 		for _, d := range content {
-			allRows = append(allRows, sJoin(d, ","))
+			allRows = append(allRows, strings.Join(d, ","))
 		}
 		goto SAVE
 	}
@@ -169,7 +171,7 @@ func CsvReader(
 
 	// default hdrLine is original header-line
 	if len(content) > 0 || keepOriHdr {
-		hdrLine = sJoin(headers, ",")
+		hdrLine = strings.Join(headers, ",")
 	}
 
 	for i, d := range content {
@@ -190,11 +192,12 @@ func CsvReader(
 SAVE:
 	// save
 	if !IsNil(w) {
-		data := []byte(sTrimSuffix(hdrLine+"\n"+sJoin(allRows, "\n"), "\n"))
+		data := []byte(strings.TrimSuffix(hdrLine+"\n"+strings.Join(allRows, "\n"), "\n"))
 		_, err = w.Write(data)
-		failP1OnErr("%v", err)
+		if err != nil {
+			return "", nil, err
+		}
 	}
-
 	return hdrLine, allRows, nil
 }
 
@@ -207,19 +210,25 @@ func Scan(in []byte, f func(i, n int, headers, items []string) (ok bool, hdr, ro
 func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, hdr, row string), keepOriHdr bool, outPath string) (string, []string, error) {
 
 	fr, err := os.Open(path)
-	failP1OnErr("csvPath: File is not found || wrong root : %v", err)
+	if err != nil {
+		return "", nil, err
+	}
 	defer fr.Close()
 
 	var fw *os.File = nil
 
 	if trimBlank(outPath) != "" {
-		mustCreateDir(filepath.Dir(outPath))
+		fd.MustCreateDir(filepath.Dir(outPath))
 		fw, err = os.OpenFile(outPath, os.O_WRONLY|os.O_CREATE, 0666)
-		failP1OnErr("outPath: File is not found || wrong root : %v", err)
+		if err != nil {
+			return "", nil, err
+		}
 		defer fw.Close()
 	}
 
 	hRow, rows, err := CsvReader(fr, f, keepOriHdr, false, fw)
-	failOnErrWhen(rows == nil, "%v @ %s", err, outPath) // go internal csv func error
+	if rows == nil && err != nil { // go internal csv func error
+		return "", nil, err
+	}
 	return hRow, rows, err
 }

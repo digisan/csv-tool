@@ -14,7 +14,6 @@ import (
 	ct "github.com/digisan/csv-tool"
 	. "github.com/digisan/go-generics"
 	fd "github.com/digisan/gotk/file-dir"
-	lk "github.com/digisan/logkit"
 )
 
 // GetRepeated : remove repeated items
@@ -148,9 +147,11 @@ type Cond struct {
 // [=, !=] only apply to string comparison, [>, <, >=, <=] apply to number comparison
 func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, error) {
 
-	lk.FailP1OnErrWhen(NotIn(R, '&', '|'), "%v", fmt.Errorf("[R] can only be [&, |]"))
-	nCGrp := len(CGrp)
+	if NotIn(R, '&', '|') {
+		return "", nil, fmt.Errorf("[R] can only be [&, |]")
+	}
 
+	nCGrp := len(CGrp)
 	return ct.Scan(in, func(idx, cnt int, headers, items []string) (bool, string, string) {
 
 		hdrNames := Map(headers, func(i int, e string) string { return ct.ItemEsc(e) })
@@ -162,11 +163,11 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 
 		CResults := []any{}
 
-	NEXTCONDITION:
+	NEXT_CONDITION:
 		for _, C := range CGrp {
 
 			if R == '|' && len(CResults) > 0 {
-				break NEXTCONDITION
+				break NEXT_CONDITION
 			}
 
 			if I := IdxOf(C.Hdr, headers...); I != -1 {
@@ -176,13 +177,13 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 					if iVal == C.Val {
 						CResults = append(CResults, struct{}{})
 					}
-					continue NEXTCONDITION
+					continue NEXT_CONDITION
 				}
 				if C.Rel == "!=" {
 					if iVal != C.Val {
 						CResults = append(CResults, struct{}{})
 					}
-					continue NEXTCONDITION
+					continue NEXT_CONDITION
 				}
 
 				switch Typ := fmt.Sprintf("%T", C.Val); Typ {
@@ -295,12 +296,16 @@ func QueryFile(csv string, incCol bool, hdrNames []string, R rune, CGrp []Cond, 
 	}
 
 	in, err := os.ReadFile(csv)
-	lk.FailP1OnErr("%v", err)
+	if err != nil {
+		return err
+	}
 
 	fd.MustCreateDir(filepath.Dir(out))
 
 	fw, err := os.OpenFile(out, os.O_WRONLY|os.O_CREATE, 0666)
-	lk.FailP1OnErr("%v", err)
+	if err != nil {
+		return err
+	}
 	defer fw.Close()
 
 	_, _, err = Query(in, incCol, hdrNames, R, CGrp, fw)
@@ -314,7 +319,6 @@ func QueryByConfig(tomlPath string) (int, error) {
 	if _, err := toml.DecodeFile(tomlPath, config); err != nil {
 		return 0, err
 	}
-	// failOnErr("%v", err)
 
 	for _, qry := range config.Query {
 
