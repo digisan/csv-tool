@@ -49,5 +49,6 @@ func TestCombine(t *testing.T) {
 func TestAppendOneRowCells(t *testing.T) {
 	fPath := "./data/test.csv"
 	Create(fPath, "h1", "h2", "h3", "h4")
-	fmt.Println(AppendOneRowCells(fPath, true, "c1\",c1", "c2", ",c2", ",,,"))
+	fmt.Println(AppendOneRowCells(fPath, true, "c1\",c1", "c2", ",c2", ",,,", "ignore"))
+	fmt.Println(AppendOneRowCells(fPath, true, "N/A"))
 }

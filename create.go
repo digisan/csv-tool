@@ -22,7 +22,29 @@ func Create(csvOut string, hdrNames ...string) (string, error) {
 	return hdrRow, nil
 }
 
+// if cells are more, ignore redundant cells.
+// if cells are less, repeat the last cell to fill remainder headers
 func AppendOneRowCells(fPath string, validate bool, cells ...string) error {
+
+	headers, _, err := FileInfo(fPath)
+	if err != nil {
+		return err
+	}
+	nHdr, nCell := len(headers), len(cells)
+
+	if nHdr == 0 || nCell == 0 {
+		return fmt.Errorf("invalid csv for appending or no cells provided")
+	}
+
+	if nHdr > nCell {
+		cellLast := cells[nCell-1]
+		for i := 0; i < nHdr-nCell; i++ {
+			cells = append(cells, cellLast)
+		}
+	} else if nHdr < nCell {
+		cells = cells[:nHdr]
+	}
+
 	cellsEsc := []string{}
 	for _, cell := range cells {
 		cellsEsc = append(cellsEsc, CellEsc(cell))
