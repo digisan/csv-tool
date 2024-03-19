@@ -14,20 +14,20 @@ import (
 	lk "github.com/digisan/logkit"
 )
 
-func ItemEsc(item string) string {
-	if len(item) > 1 {
-		hasComma, hasDQ, hasLF := strings.Contains(item, ","), strings.Contains(tryStripDQ(item), "\""), strings.Contains(item, "\n")
+func CellEsc(cell string) string {
+	if len(cell) > 1 {
+		hasComma, hasDQ, hasLF := strings.Contains(cell, ","), strings.Contains(tryStripDQ(cell), "\""), strings.Contains(cell, "\n")
 		if hasDQ {
-			item = strings.ReplaceAll(item, "\"", "\"\"")
+			cell = strings.ReplaceAll(cell, "\"", "\"\"")
 		}
 		if hasComma || hasLF || hasDQ {
-			item = tryWrapWithDQ(item)
+			cell = tryWrapWithDQ(cell)
 		}
 	}
-	return item
+	return cell
 }
 
-// Info : headers, nItem, error
+// Info : headers, nRow, error
 func Info(r io.Reader) ([]string, int, error) {
 	rs, ok := r.(io.ReadSeeker)
 	if ok {
@@ -45,7 +45,7 @@ func Info(r io.Reader) ([]string, int, error) {
 	return content[0], len(content) - 1, nil
 }
 
-// CsvInfo : headers, nItem, error
+// CsvInfo : headers, nRow, error
 func FileInfo(path string) ([]string, int, error) {
 	csvFile, err := os.Open(path)
 	if err != nil {
@@ -58,20 +58,20 @@ func FileInfo(path string) ([]string, int, error) {
 	return Info(csvFile)
 }
 
-func HeaderHasAll(r io.Reader, hdrItems ...string) (bool, error) {
+func HeaderHasAll(r io.Reader, hdr ...string) (bool, error) {
 	headers, _, err := Info(r)
 	if err != nil {
 		return false, err
 	}
-	for _, item := range hdrItems {
-		if NotIn(item, headers...) {
+	for _, h := range hdr {
+		if NotIn(h, headers...) {
 			return false, nil
 		}
 	}
 	return true, nil
 }
 
-func FileHeaderHasAll(path string, hdrItems ...string) (bool, error) {
+func FileHeaderHasAll(path string, hdr ...string) (bool, error) {
 	csvFile, err := os.Open(path)
 	if err != nil {
 		if csvFile != nil {
@@ -80,23 +80,23 @@ func FileHeaderHasAll(path string, hdrItems ...string) (bool, error) {
 		return false, err
 	}
 	defer csvFile.Close()
-	return HeaderHasAll(csvFile, hdrItems...)
+	return HeaderHasAll(csvFile, hdr...)
 }
 
-func HeaderHasAny(r io.Reader, hdrItems ...string) (bool, error) {
+func HeaderHasAny(r io.Reader, hdrs ...string) (bool, error) {
 	headers, _, err := Info(r)
 	if err != nil {
 		return false, err
 	}
-	for _, item := range hdrItems {
-		if In(item, headers...) {
+	for _, hdr := range hdrs {
+		if In(hdr, headers...) {
 			return true, nil
 		}
 	}
 	return false, nil
 }
 
-func FileHeaderHasAny(path string, hdrItems ...string) (bool, error) {
+func FileHeaderHasAny(path string, hdr ...string) (bool, error) {
 	csvFile, err := os.Open(path)
 	if err != nil {
 		if csvFile != nil {
@@ -105,13 +105,13 @@ func FileHeaderHasAny(path string, hdrItems ...string) (bool, error) {
 		return false, err
 	}
 	defer csvFile.Close()
-	return HeaderHasAny(csvFile, hdrItems...)
+	return HeaderHasAny(csvFile, hdr...)
 }
 
 // CsvReader : if [f arg: i==-1], it is pure HeaderRow csv
 func CsvReader(
 	r io.Reader,
-	f func(i, n int, headers, items []string) (ok bool, hdr, row string),
+	f func(i, n int, headers, cells []string) (ok bool, hdr, row string),
 	keepOriHdr bool,
 	keepAnyRow bool,
 	w io.Writer,
@@ -137,12 +137,12 @@ func CsvReader(
 	}
 
 	headers := make([]string, 0)
-	for i, hdrItem := range content[0] {
-		if hdrItem == "" {
-			hdrItem = fmt.Sprintf("column_%d", i)
-			lk.WarnOnErr("%v: - column[%d] is empty, mark [%s]", fmt.Errorf("CSV_COLUMN_HEADER_EMPTY"), i, hdrItem)
+	for i, hdrCell := range content[0] {
+		if hdrCell == "" {
+			hdrCell = fmt.Sprintf("column_%d", i)
+			lk.WarnOnErr("%v: - column[%d] is empty, mark [%s]", fmt.Errorf("CSV_COLUMN_HEADER_EMPTY"), i, hdrCell)
 		}
-		headers = append(headers, ItemEsc(hdrItem)) // default is original headers
+		headers = append(headers, CellEsc(hdrCell)) // default is original headers
 	}
 
 	// Remove The Header Row //
@@ -202,12 +202,12 @@ SAVE:
 }
 
 // Scan : if [f arg: i==-1], it is pure HeaderRow csv
-func Scan(in []byte, f func(i, n int, headers, items []string) (ok bool, hdr, row string), keepOriHdr bool, w io.Writer) (string, []string, error) {
+func Scan(in []byte, f func(i, n int, headers, cells []string) (ok bool, hdr, row string), keepOriHdr bool, w io.Writer) (string, []string, error) {
 	return CsvReader(bytes.NewReader(in), f, keepOriHdr, false, w)
 }
 
 // ScanFile :
-func ScanFile(path string, f func(i, n int, headers, items []string) (ok bool, hdr, row string), keepOriHdr bool, outPath string) (string, []string, error) {
+func ScanFile(path string, f func(i, n int, headers, cells []string) (ok bool, hdr, row string), keepOriHdr bool, outPath string) (string, []string, error) {
 
 	fr, err := os.Open(path)
 	if err != nil {

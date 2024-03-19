@@ -114,7 +114,7 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	return splitFiles, ignoredFiles, split(0, in, outDir)
 }
 
-func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
+func split(rl int, in []byte, prevPath string, pCatCells ...string) error {
 
 	if rl >= nSchema {
 		return nil
@@ -178,13 +178,13 @@ func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 	// Safe Mode, But Slow //
 	if !parallel {
 
-		for _, catItem := range uniRows {
+		for _, catCell := range uniRows {
 
 			csvOut := outDir
-			for _, pcItem := range pCatItems {
-				csvOut += pcItem + "/"
+			for _, pcCell := range pCatCells {
+				csvOut += pcCell + "/"
 			}
-			csvOut += catItem + "/" + basename
+			csvOut += catCell + "/" + basename
 
 			wBuf := &bytes.Buffer{}
 
@@ -193,7 +193,7 @@ func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 				false,
 				rmHdrGrp,
 				'&',
-				[]qry.Cond{{Hdr: cat, Val: catItem, Rel: "="}},
+				[]qry.Cond{{Hdr: cat, Val: catCell, Rel: "="}},
 				io.Writer(wBuf),
 			)
 
@@ -202,7 +202,7 @@ func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 				splitFiles = append(splitFiles, csvOut)
 			}
 
-			split(rl, wBuf.Bytes(), filepath.Dir(csvOut), append(pCatItems, catItem)...)
+			split(rl, wBuf.Bytes(), filepath.Dir(csvOut), append(pCatCells, catCell)...)
 		}
 	}
 
@@ -212,16 +212,16 @@ func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 		wg := &sync.WaitGroup{}
 		wg.Add(len(uniRows))
 
-		for _, catItem := range uniRows {
+		for _, catCell := range uniRows {
 
-			go func(catItem string) {
+			go func(catCell string) {
 				defer wg.Done()
 
 				csvOut := outDir
-				for _, pcItem := range pCatItems {
-					csvOut += pcItem + "/"
+				for _, pcCell := range pCatCells {
+					csvOut += pcCell + "/"
 				}
-				csvOut += catItem + "/" + basename
+				csvOut += catCell + "/" + basename
 
 				wBuf := &bytes.Buffer{}
 
@@ -230,7 +230,7 @@ func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 					false,
 					rmHdrGrp,
 					'&',
-					[]qry.Cond{{Hdr: cat, Val: catItem, Rel: "="}},
+					[]qry.Cond{{Hdr: cat, Val: catCell, Rel: "="}},
 					io.Writer(wBuf),
 				)
 
@@ -241,9 +241,9 @@ func split(rl int, in []byte, prevPath string, pCatItems ...string) error {
 					mtx.Unlock()
 				}
 
-				split(rl, wBuf.Bytes(), filepath.Dir(csvOut), append(pCatItems, catItem)...)
+				split(rl, wBuf.Bytes(), filepath.Dir(csvOut), append(pCatCells, catCell)...)
 
-			}(catItem)
+			}(catCell)
 		}
 
 		wg.Wait()

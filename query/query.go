@@ -16,26 +16,26 @@ import (
 	fd "github.com/digisan/gotk/file-dir"
 )
 
-// GetRepeated : remove repeated items
+// GetRepeated : remove repeated cells
 func GetRepeated(csv, out string, f func(rRepCnt int) bool) (string, []string, error) {
 	_, _, mHashCnt, err := Unique(csv, "")
 	if err != nil {
 		return "", nil, err
 	}
 	return ct.ScanFile(csv,
-		func(i, n int, headers, items []string) (ok bool, hdr string, row string) {
-			md5s := Map(items, func(i int, e string) string { return fmt.Sprint(md5.Sum([]byte(e))) })
+		func(i, n int, headers, cells []string) (ok bool, hdr string, row string) {
+			md5s := Map(cells, func(i int, e string) string { return fmt.Sprint(md5.Sum([]byte(e))) })
 			rowHash := strings.Join(md5s, ",")
-			headers4w := Map(headers, func(i int, e string) string { return ct.ItemEsc(e) })
-			items4w := Map(items, func(i int, e string) string { return ct.ItemEsc(e) })
-			return f(mHashCnt[rowHash]), strings.Join(headers4w, ","), strings.Join(items4w, ",")
+			headers4w := Map(headers, func(i int, e string) string { return ct.CellEsc(e) })
+			cells4w := Map(cells, func(i int, e string) string { return ct.CellEsc(e) })
+			return f(mHashCnt[rowHash]), strings.Join(headers4w, ","), strings.Join(cells4w, ",")
 		},
 		true,
 		out,
 	)
 }
 
-// Unique : remove repeated items
+// Unique : remove repeated cells
 func Unique(csv, out string) (string, []string, map[string]int, error) {
 	// check out csv file is valid
 	defer func() {
@@ -47,8 +47,8 @@ func Unique(csv, out string) (string, []string, map[string]int, error) {
 	mHashCnt := make(map[string]int)
 	h, rs, err := ct.ScanFile(
 		csv,
-		func(idx, cnt int, headers, items []string) (bool, string, string) {
-			md5s := Map(items, func(i int, e string) string { return fmt.Sprint(md5.Sum([]byte(e))) })
+		func(idx, cnt int, headers, cells []string) (bool, string, string) {
+			md5s := Map(cells, func(i int, e string) string { return fmt.Sprint(md5.Sum([]byte(e))) })
 			rowHash := strings.Join(md5s, ",")
 			_, ok := mHashCnt[rowHash]
 			defer func() { mHashCnt[rowHash]++ }()
@@ -57,9 +57,9 @@ func Unique(csv, out string) (string, []string, map[string]int, error) {
 				return false, "", ""
 			}
 
-			headers4w := Map(headers, func(i int, e string) string { return ct.ItemEsc(e) })
-			items4w := Map(items, func(i int, e string) string { return ct.ItemEsc(e) })
-			return !ok, strings.Join(headers4w, ","), strings.Join(items4w, ",")
+			headers4w := Map(headers, func(i int, e string) string { return ct.CellEsc(e) })
+			cells4w := Map(cells, func(i int, e string) string { return ct.CellEsc(e) })
+			return !ok, strings.Join(headers4w, ","), strings.Join(cells4w, ",")
 		},
 		true,
 		out,
@@ -78,7 +78,7 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 	cIndices, hdrRow := []int{}, ""
 	fast, min, max := IsContinuous(iRows...)
 
-	return ct.Scan(in, func(idx, cnt int, headers, items []string) (bool, string, string) {
+	return ct.Scan(in, func(idx, cnt int, headers, cells []string) (bool, string, string) {
 
 		// get [hdrRow], [cIndices] once
 		if hdrRow == "" {
@@ -90,7 +90,7 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 					func(i int, e string) int { return IdxOf(e, headers...) },
 				)
 				hdrRt = Reorder(headers, cIndices) // Reorder has filter
-				hdrRt = Map(hdrRt, func(i int, e string) string { return ct.ItemEsc(e) })
+				hdrRt = Map(hdrRt, func(i int, e string) string { return ct.CellEsc(e) })
 			} else {
 				cIndices = FilterMap(headers,
 					func(i int, e string) bool { return NotIn(e, hdrNames...) },
@@ -98,7 +98,7 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 				)
 				hdrRt = FilterMap(headers,
 					func(i int, e string) bool { return In(i, cIndices...) },
-					func(i int, e string) string { return ct.ItemEsc(e) },
+					func(i int, e string) string { return ct.CellEsc(e) },
 				)
 			}
 			hdrRow = strings.Join(hdrRt, ",")
@@ -116,19 +116,19 @@ func Subset(in []byte, incCol bool, hdrNames []string, incRow bool, iRows []int,
 		}
 
 		if ok {
-			// filter column items
-			var itemsRt []string
+			// filter column cells
+			var cellsRt []string
 			if incCol {
-				itemsRt = Reorder(items, cIndices)
-				itemsRt = Map(itemsRt, func(i int, e string) string { return ct.ItemEsc(e) })
+				cellsRt = Reorder(cells, cIndices)
+				cellsRt = Map(cellsRt, func(i int, e string) string { return ct.CellEsc(e) })
 			} else {
-				itemsRt = FilterMap(items,
+				cellsRt = FilterMap(cells,
 					func(i int, e string) bool { return In(i, cIndices...) },
-					func(i int, e string) string { return ct.ItemEsc(e) },
+					func(i int, e string) string { return ct.CellEsc(e) },
 				)
 			}
 
-			return true, hdrRow, strings.Join(itemsRt, ",")
+			return true, hdrRow, strings.Join(cellsRt, ",")
 		}
 
 		return true, hdrRow, "" // still "ok" as hdrRow is needed even if empty content
@@ -152,12 +152,12 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 	}
 
 	nCGrp := len(CGrp)
-	return ct.Scan(in, func(idx, cnt int, headers, items []string) (bool, string, string) {
+	return ct.Scan(in, func(idx, cnt int, headers, cells []string) (bool, string, string) {
 
-		hdrNames := Map(headers, func(i int, e string) string { return ct.ItemEsc(e) })
+		hdrNames := Map(headers, func(i int, e string) string { return ct.CellEsc(e) })
 		hdrRow := strings.Join(hdrNames, ",")
 
-		if len(items) == 0 {
+		if len(cells) == 0 {
 			return true, hdrRow, ""
 		}
 
@@ -171,7 +171,7 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 			}
 
 			if I := IdxOf(C.Hdr, headers...); I != -1 {
-				iVal := items[I]
+				iVal := cells[I]
 
 				if C.Rel == "=" {
 					if iVal == C.Val {
@@ -258,8 +258,8 @@ func Select(in []byte, R rune, CGrp []Cond, w io.Writer) (string, []string, erro
 
 		// No conditions OR condition ok
 		if ok || len(CGrp) == 0 {
-			itemValues := Map(items, func(i int, e string) string { return ct.ItemEsc(e) })
-			return true, hdrRow, strings.Join(itemValues, ",")
+			cellValues := Map(cells, func(i int, e string) string { return ct.CellEsc(e) })
+			return true, hdrRow, strings.Join(cellValues, ",")
 		}
 
 		return true, hdrRow, ""
@@ -325,7 +325,7 @@ func QueryByConfig(tomlPath string) (int, error) {
 		cond := []Cond{}
 
 		for _, c := range qry.Cond {
-			cond = append(cond, Cond{Hdr: c.Header, Val: c.Value, Rel: c.RelaOfItemValue})
+			cond = append(cond, Cond{Hdr: c.Header, Val: c.Value, Rel: c.RelaOfCellValue})
 		}
 
 		// fmt.Println("Processing ... " + qry.Name)

@@ -105,23 +105,23 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 
 	for _, hdr := range schema {
 		idx := IdxOf(hdr, headers...)
-		h, items, err := ct.Column(in, idx)
+		h, cells, err := ct.Column(in, idx)
 		if err != nil {
 			return nil, nil, err
 		}
 
-		items = Settify(items...)
-		fmt.Sprintln(" --", h, items)
+		cells = Settify(cells...)
+		fmt.Sprintln(" --", h, cells)
 
 		if len(lvlDir) > 0 {
 			for _, dir := range lvlDir {
-				for _, item := range items {
-					lvlDir = append(lvlDir, filepath.Join(dir, item))
+				for _, cell := range cells {
+					lvlDir = append(lvlDir, filepath.Join(dir, cell))
 				}
 			}
 		} else {
-			for _, item := range items {
-				lvlDir = append(lvlDir, filepath.Join(outDir, item))
+			for _, cell := range cells {
+				lvlDir = append(lvlDir, filepath.Join(outDir, cell))
 			}
 		}
 	}
@@ -155,11 +155,11 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 	}
 	ct.Scan(
 		inData,
-		func(i, n int, headers, items []string) (ok bool, hdr string, row string) {
+		func(i, n int, headers, cells []string) (ok bool, hdr string, row string) {
 
 			schemaVal := []string{}
 			for _, iSch := range iSchema {
-				schemaVal = append(schemaVal, items[iSch])
+				schemaVal = append(schemaVal, cells[iSch])
 			}
 
 			toCsv := outDir
@@ -172,11 +172,11 @@ func Split(csv, out string, categories ...string) ([]string, []string, error) {
 
 			if rmSchemaCol {
 				for _, iSch := range iSchema {
-					DelEleOrderlyAt(&items, iSch)
+					DelEleOrderlyAt(&cells, iSch)
 				}
 			}
 
-			line := []byte(strings.Join(items, ","))
+			line := []byte(strings.Join(cells, ","))
 			fd.MustAppendFile(toCsv, line, true)
 
 			return true, "", ""

@@ -13,7 +13,7 @@ type Config struct {
 			Header          string
 			Value           any
 			ValueType       string
-			RelaOfItemValue string
+			RelaOfCellValue string
 		}
 	}
 }

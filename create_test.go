@@ -1,6 +1,7 @@
 package csvtool
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -43,4 +44,10 @@ func TestCombine(t *testing.T) {
 			Combine(tt.args.csvA, tt.args.csvB, tt.args.linkHeaders, tt.args.onlyKeepLinkRow, tt.args.csvOut)
 		})
 	}
+}
+
+func TestAppendOneRowCells(t *testing.T) {
+	fPath := "./data/test.csv"
+	Create(fPath, "h1", "h2", "h3", "h4")
+	fmt.Println(AppendOneRowCells(fPath, true, "c1\",c1", "c2", ",c2", ",,,"))
 }

@@ -16,7 +16,7 @@ func TestFileColumn(t *testing.T) {
 		name      string
 		args      args
 		wantHdr   string
-		wantItems []string
+		wantCells []string
 		wantErr   bool
 	}{
 		// TODO: Add test cases.
@@ -27,13 +27,13 @@ func TestFileColumn(t *testing.T) {
 				idx: 1,
 			},
 			wantHdr:   `Id,"Name,Name1",Age,"Na,me"`,
-			wantItems: []string{`Ahmad,Ahmad`, "Hello", `Test1`, `Test2`, `[""abc]`},
+			wantCells: []string{`Ahmad,Ahmad`, "Hello", `Test1`, `Test2`, `[""abc]`},
 			wantErr:   false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotHdr, gotItems, err := FileColumn(tt.args.csv, tt.args.idx)
+			gotHdr, gotCells, err := FileColumn(tt.args.csv, tt.args.idx)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FileColumn() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -41,8 +41,8 @@ func TestFileColumn(t *testing.T) {
 			if gotHdr != tt.wantHdr {
 				t.Errorf("FileColumn() gotHdr = %v, want %v", gotHdr, tt.wantHdr)
 			}
-			if !reflect.DeepEqual(gotItems, tt.wantItems) {
-				t.Errorf("FileColumn() gotItems = %v, want %v", gotItems, tt.wantItems)
+			if !reflect.DeepEqual(gotCells, tt.wantCells) {
+				t.Errorf("FileColumn() gotCells = %v, want %v", gotCells, tt.wantCells)
 			}
 		})
 	}

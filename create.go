@@ -14,7 +14,7 @@ func Create(csvOut string, hdrNames ...string) (string, error) {
 		return "", fmt.Errorf("no headers provided")
 	}
 
-	headers := Map(hdrNames, func(i int, e string) string { return ItemEsc(e) })
+	headers := Map(hdrNames, func(i int, e string) string { return CellEsc(e) })
 	hdrRow := strings.Join(headers, ",")
 	if csvOut != "" {
 		fd.MustWriteFile(csvOut, []byte(hdrRow))
@@ -22,14 +22,25 @@ func Create(csvOut string, hdrNames ...string) (string, error) {
 	return hdrRow, nil
 }
 
+func AppendOneRowCells(fPath string, validate bool, cells ...string) error {
+	cellsEsc := []string{}
+	for _, cell := range cells {
+		cellsEsc = append(cellsEsc, CellEsc(cell))
+	}
+	return AppendRows(fPath, validate, strings.Join(cellsEsc, ","))
+}
+
 // Append : extend rows, append rows content to csv file
-func Append(path string, validate bool, rows ...string) {
+func AppendRows(fPath string, validate bool, rows ...string) error {
 	if len(rows) > 0 {
-		fd.MustAppendFile(path, []byte(strings.Join(rows, "\n")), true)
+		fd.MustAppendFile(fPath, []byte(strings.Join(rows, "\n")), true)
 	}
 	if validate {
-		ScanFile(path, nil, true, "")
+		if _, _, err := ScanFile(fPath, nil, true, ""); err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 // Combine : extend columns, linkHeaders combination must be UNIQUE in csvA & csvB
@@ -57,19 +68,19 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outP
 		lkIndicesA = Map(linkHeaders, func(i int, e string) int { return IdxOf(e, headersA...) })
 		lkIndicesB = Map(linkHeaders, func(i int, e string) int { return IdxOf(e, headersB...) })
 		emptyComma = strings.Repeat(",", len(headersB)-len(linkHeaders))
-		lkItemsGrp = [][]string{}
+		lkCellsGrp = [][]string{}
 		mAiBr      = make(map[int]string)
 	)
 
 	_, rowsA, _ := ScanFile(
 		pathA,
-		func(i, n int, headers, items []string) (bool, string, string) {
+		func(i, n int, headers, cells []string) (bool, string, string) {
 
-			lkrItems := Map(lkIndicesA, func(i, e int) string { return items[e] })
-			lkItemsGrp = append(lkItemsGrp, lkrItems)
+			lkrCells := Map(lkIndicesA, func(i, e int) string { return cells[e] })
+			lkCellsGrp = append(lkCellsGrp, lkrCells)
 
-			items4w := Map(items, func(i int, e string) string { return ItemEsc(e) })
-			return true, "", strings.Join(items4w, ",")
+			cells4w := Map(cells, func(i int, e string) string { return CellEsc(e) })
+			return true, "", strings.Join(cells4w, ",")
 		},
 		false,
 		"",
@@ -77,14 +88,14 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outP
 
 	ScanFile(
 		pathB,
-		func(i, n int, headers, items []string) (bool, string, string) {
-			for iAtRowA, lkrItems := range lkItemsGrp {
-				if IsSuper(items, lkrItems) {
-					items4w := FilterMap(items,
+		func(i, n int, headers, cells []string) (bool, string, string) {
+			for iAtRowA, lkrCells := range lkCellsGrp {
+				if IsSuper(cells, lkrCells) {
+					cells4w := FilterMap(cells,
 						func(i int, e string) bool { return NotIn(i, lkIndicesB...) },
-						func(i int, e string) string { return ItemEsc(e) },
+						func(i int, e string) string { return CellEsc(e) },
 					)
-					mAiBr[iAtRowA] = strings.Join(items4w, ",")
+					mAiBr[iAtRowA] = strings.Join(cells4w, ",")
 					return false, "", ""
 				}
 			}
@@ -111,6 +122,6 @@ func Combine(pathA, pathB string, linkHeaders []string, onlyLinkedRow bool, outP
 		}
 	}
 
-	Append(outPath, true, rowsC...)
+	AppendRows(outPath, true, rowsC...)
 	return nil
 }

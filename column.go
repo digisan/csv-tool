@@ -16,11 +16,11 @@ type ColAttr struct {
 	IsUnique  bool
 	HasNull   bool
 	HasEmpty  bool
-	AllFilled bool // no item is "null/NULL/nil" AND no empty item
+	AllFilled bool // no cell is "null/NULL/nil" AND no empty cell
 }
 
-// Column : header, items, err
-func Column(r io.Reader, idx int) (hdr string, items []string, err error) {
+// Column : header, cells, err
+func Column(r io.Reader, idx int) (hdr string, cells []string, err error) {
 	rs, ok := r.(io.ReadSeeker)
 	if ok {
 		defer rs.Seek(0, io.SeekStart)
@@ -35,13 +35,13 @@ func Column(r io.Reader, idx int) (hdr string, items []string, err error) {
 		return "", nil, fmt.Errorf("idx(%d) is out of index range", idx)
 	}
 
-	return CsvReader(r, func(i, n int, headers, items []string) (ok bool, hdr, row string) {
-		return true, headers[idx], items[idx]
+	return CsvReader(r, func(i, n int, headers, cells []string) (ok bool, hdr, row string) {
+		return true, headers[idx], cells[idx]
 	}, true, true, nil)
 }
 
-// FileColumn : header, items, err
-func FileColumn(path string, idx int) (hdr string, items []string, err error) {
+// FileColumn : header, cells, err
+func FileColumn(path string, idx int) (hdr string, cells []string, err error) {
 	csv, err := os.Open(path)
 	if err != nil {
 		if csv != nil {
@@ -60,7 +60,7 @@ func GetColAttr(r io.Reader, idx int) (*ColAttr, error) {
 		defer rs.Seek(0, io.SeekStart)
 	}
 
-	hdr, items, err := Column(r, idx)
+	hdr, cells, err := Column(r, idx)
 	if err != nil {
 		return nil, err
 	}
@@ -68,14 +68,14 @@ func GetColAttr(r io.Reader, idx int) (*ColAttr, error) {
 	ca := &ColAttr{
 		Idx:       idx,
 		Header:    hdr,
-		IsEmpty:   len(items) == 0,
-		IsUnique:  len(items) == len(Settify(items...)),
+		IsEmpty:   len(cells) == 0,
+		IsUnique:  len(cells) == len(Settify(cells...)),
 		HasNull:   false,
 		HasEmpty:  false,
 		AllFilled: true,
 	}
-	for _, item := range items {
-		switch trimBlank(item) {
+	for _, cell := range cells {
+		switch trimBlank(cell) {
 		case "null", "nil", "NULL":
 			ca.HasNull = true
 		case "":
