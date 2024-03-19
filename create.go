@@ -31,7 +31,6 @@ func AppendOneRowCells(fPath string, validate bool, cells ...string) error {
 		return err
 	}
 	nHdr, nCell := len(headers), len(cells)
-
 	if nHdr == 0 || nCell == 0 {
 		return fmt.Errorf("invalid csv for appending or no cells provided")
 	}
@@ -50,6 +49,28 @@ func AppendOneRowCells(fPath string, validate bool, cells ...string) error {
 		cellsEsc = append(cellsEsc, CellEsc(cell))
 	}
 	return AppendRows(fPath, validate, strings.Join(cellsEsc, ","))
+}
+
+func AppendOneRowByMap(fPath string, validate bool, mHdrCell map[string]any, defaultValue any) error {
+
+	if defaultValue == nil {
+		defaultValue = ""
+	}
+
+	headers, _, err := FileInfo(fPath)
+	if err != nil {
+		return err
+	}
+
+	cells := make([]string, len(headers))
+	for i, hdr := range headers {
+		cell, ok := mHdrCell[hdr]
+		if ok && cell == nil {
+			cell = ""
+		}
+		cells[i] = fmt.Sprint(IF(ok, cell, defaultValue))
+	}
+	return AppendOneRowCells(fPath, validate, cells...)
 }
 
 // Append : extend rows, append rows content to csv file

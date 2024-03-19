@@ -51,4 +51,9 @@ func TestAppendOneRowCells(t *testing.T) {
 	Create(fPath, "h1", "h2", "h3", "h4")
 	fmt.Println(AppendOneRowCells(fPath, true, "c1\",c1", "c2", ",c2", ",,,", "ignore"))
 	fmt.Println(AppendOneRowCells(fPath, true, "N/A"))
+
+	m := make(map[string]any)
+	m["h2"] = nil
+	m["h3"] = "hello,\t Cell2"
+	fmt.Println(AppendOneRowByMap(fPath, true, m, "N/A"))
 }
